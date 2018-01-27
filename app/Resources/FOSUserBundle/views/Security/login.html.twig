@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block elements %}
+    <div class="col-12" style="margin-top: 1%;">
+        {% for type, messages in app.session.flashBag.all %}
+            {% for message in messages %}
+                <div class="alert alert-danger">{{ message|trans({}, 'FOSUserBundle') }}</div>
+            {% endfor %}
+        {% endfor %}
+        {% if error %}
+            <div class="alert alert-danger text-center">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+        <div class="card">
+            <div class="card-header">
+                <h3 class="panel-title text-center">Login to Your Account</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ path("fos_user_security_check") }}" method="post" class="formLogin">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+                    <div class="login-container">
+                        <form>
+                            <div class="form-group" id="usernameGroup">
+                                <label for="username">Identifiant :</label>
+                                <input class="form-control" type="text" id="username" name="_username"
+                                       autofocus autocomplete="off"
+                                       value="{{ last_username }}" required="required"
+                                       placeholder="PP-2573"
+                                />
+                            </div>
+                            <div class="form-group" id="passwordGroup">
+                                <label for="password">Mot de passe :</label>
+                                <input class="form-control" type="password" id="password"
+                                       autocomplete="off"
+                                       name="_password" required="required"
+                                       placeholder="******"
+                                />
+                            </div>
+                            {#<div class="form-group" id="rememberGroup">#}
+                            {#<label for="remember_me">Remember me? </label>#}
+                            {#<input class="form-control" type="checkbox" id="remember_me" name="_remember_me" value="on" />#}
+                            {#</div>#}
+                            <br>
+                            <input class="btn btn-default btn-block" type="submit" id="_submit" name="_submit" value="Connexion" />
+                        </form>
+                        {#<div class="login-help">#}
+                        {#<a href="{{ path('fos_user_registration_register') }}">Register</a> - <a href="{{ path('fos_user_resetting_request') }}">Forgot Password</a>#}
+                        {#</div>#}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock elements %}
