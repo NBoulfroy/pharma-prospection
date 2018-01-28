@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block elements %}
-    <div class="col-12" style="margin-top: 1%;">
+    <div class="col-12 mt-4">
         {% for type, messages in app.session.flashBag.all %}
             {% for message in messages %}
                 <div class="alert alert-danger">{{ message|trans({}, 'FOSUserBundle') }}</div>
@@ -20,7 +20,7 @@
                     <div class="login-container">
                         <form>
                             <div class="form-group" id="usernameGroup">
-                                <label for="username">Identifiant :</label>
+                                <label for="username">Username:</label>
                                 <input class="form-control" type="text" id="username" name="_username"
                                        autofocus autocomplete="off"
                                        value="{{ last_username }}" required="required"
@@ -28,7 +28,7 @@
                                 />
                             </div>
                             <div class="form-group" id="passwordGroup">
-                                <label for="password">Mot de passe :</label>
+                                <label for="password">Password:</label>
                                 <input class="form-control" type="password" id="password"
                                        autocomplete="off"
                                        name="_password" required="required"
