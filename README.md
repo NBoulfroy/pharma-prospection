@@ -1,1 +1,1 @@
-# Pharma-Prospection - *Symfony* 3.4.1 #
+# Pharma-Prospection - *Symfony* 3.4.3 #
