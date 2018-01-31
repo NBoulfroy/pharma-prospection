@@ -5,6 +5,10 @@ namespace ProspectorBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use AppBundle\Entity\ExpenseAccount;
+use AppBundle\Entity\OtherExpenseAccount;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Bundle\DoctrineBundle\Registry;
 
 class DefaultController extends Controller
 {
@@ -18,7 +22,25 @@ class DefaultController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         }
 
-        return $this->render('prospector/expense.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $expensesAccount = $em->getRepository(ExpenseAccount::class)->getExpensesAccount($this->getUser()->getId());
+
+//        echo '<pre>';
+//        var_dump($expensesAccount);
+//        echo '</pre>';
+//        die();
+
+        return $this->render('prospector/expense.html.twig', array(
+            'expensesAccount' => $expensesAccount
+        ));
+    }
+
+    /**
+     * @Route("/expense-account/{id}", name="prospector_expense_account_detail", requirements={"id"= "\d+"})
+     */
+    public function expenseDetailAction($id, Request $request)
+    {
+        return $this->render('prospector/expenseDetail.html.twig');
     }
 
     /**

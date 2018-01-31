@@ -6,7 +6,7 @@ use ProspectorBundle\Model\OtherExpenseAccount as BaseOtherExpenseAccount;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ProspectorBundle\Repository\OtherExpenseRepository")
  * @ORM\Table(name="otherExpenseAccount")
  */
 class OtherExpenseAccount extends BaseOtherExpenseAccount

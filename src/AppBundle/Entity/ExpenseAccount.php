@@ -6,7 +6,7 @@ use ProspectorBundle\Model\ExpenceAccount as BaseExpenseAccount;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="ProspectorBundle\Repository\ExpenseAccountRepository")
  * @ORM\Table(name="expenseAccount")
  */
 class ExpenseAccount extends BaseExpenseAccount
@@ -19,6 +19,11 @@ class ExpenseAccount extends BaseExpenseAccount
     protected $id;
 
     /**
+     * @ORM\Column(name="month", type="datetime", nullable=false)
+     */
+    protected $month;
+
+    /**
      * @ORM\Column(name="night", type="integer", nullable=true)
      */
     protected $night;
@@ -27,6 +32,11 @@ class ExpenseAccount extends BaseExpenseAccount
      * @ORM\Column(name="middayMeal", type="integer", nullable=true)
      */
     protected $middayMeal;
+
+    /**
+     * @ORM\Column(name="totalAmount", type="decimal", precision=10, scale=2, nullable=false)
+     */
+    protected $totalAmount;
 
     /**
      * @ORM\Column(name="mileage", type="integer", nullable=false)
@@ -41,4 +51,9 @@ class ExpenseAccount extends BaseExpenseAccount
      * )
      */
     protected $othersExpensesAccount;
+
+    /**
+     * @ORM\Column(name="isSubmit", type="boolean", options={"default": false})
+     */
+    protected $isSubmit;
 }

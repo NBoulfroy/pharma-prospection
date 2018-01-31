@@ -14,6 +14,13 @@ abstract class ExpenceAccount
     protected $id;
 
     /**
+     * @var \DateTime
+     *
+     * Expense account month.
+     */
+    protected $month;
+
+    /**
      * @var int $night
      *
      * Number of nights.
@@ -40,6 +47,18 @@ abstract class ExpenceAccount
     protected $othersExpensesAccount;
 
     /**
+     * @var float $amount
+     *
+     * Total amount
+     */
+    protected $totalAmount;
+
+    /**
+     * @var boolean $isSubmit
+     */
+    protected $isSubmit;
+
+    /**
      * @return int
      */
     public function getId()
@@ -53,6 +72,22 @@ abstract class ExpenceAccount
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getMonth()
+    {
+        return $this->month;
+    }
+
+    /**
+     * @param \DateTime $month
+     */
+    public function setMonth($month)
+    {
+        $this->month = $month;
     }
 
     /**
@@ -117,5 +152,37 @@ abstract class ExpenceAccount
     public function setOthersExpensesAccount($othersExpensesAccount)
     {
         $this->othersExpensesAccount = $othersExpensesAccount;
+    }
+
+    /**
+     * @return float
+     */
+    public function getTotalAmount()
+    {
+        return $this->totalAmount;
+    }
+
+    /**
+     * @param float $totalAmount
+     */
+    public function setAmount($totalAmount)
+    {
+        $this->totalAmount = $totalAmount;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSubmit()
+    {
+        return $this->isSubmit;
+    }
+
+    /**
+     * @param bool $isSubmit
+     */
+    public function setIsSubmit($isSubmit)
+    {
+        $this->isSubmit = $isSubmit;
     }
 }
