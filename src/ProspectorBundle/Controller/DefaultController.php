@@ -9,6 +9,8 @@ use AppBundle\Entity\ExpenseAccount;
 use AppBundle\Entity\OtherExpenseAccount;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use \DateTime;
+use \DateInterval;
 
 class DefaultController extends Controller
 {
@@ -23,16 +25,37 @@ class DefaultController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
+        // Gets expenses account from database owned by connected user.
         $expensesAccount = $em->getRepository(ExpenseAccount::class)->getExpensesAccount($this->getUser()->getId());
 
+        // Gets dates if user would create new expense account.
+        $today = date('F');
+        $endDateEntry = new DateTime($today);
+        $endDateEntry->add(new DateInterval('P30D'));
+        $dates = array(
+            'today' => $today,
+            'month' => $endDateEntry->format('F')
+        );
+
 //        echo '<pre>';
-//        var_dump($expensesAccount);
+//        var_dump($dates);
 //        echo '</pre>';
 //        die();
 
         return $this->render('prospector/expense.html.twig', array(
-            'expensesAccount' => $expensesAccount
+            'expensesAccount' => $expensesAccount,
+            'dates' => $dates
         ));
+    }
+
+    /**
+     * @Route("/expense-account/submit", name="prospector_expense_account_submit")
+     */
+    public function expenseSubmitAction(Request $request)
+    {
+        if ($request->isXmlHttpRequest()) {
+
+        }
     }
 
     /**

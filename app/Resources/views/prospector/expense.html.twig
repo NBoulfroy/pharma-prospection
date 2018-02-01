@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% block title %}{{ parent() }} - your expenses account{% endblock %}
 
 {% block elements %}
     <div class="mt-4">
@@ -27,7 +28,7 @@
                     <tbody>
                         {% for expenseAccount in expensesAccount %}
                             <tr>
-                                <td>
+                                <td> {# TODO : upgrade this display. #}
                                     <form method="POST" post=""> {# TODO : complete this form. #}
                                         {% if expenseAccount.isSubmit == 0 or expenseAccount.isSubmit == false %}
                                             <input type="checkbox" name="check" id="check"
@@ -43,14 +44,15 @@
                                 <td>{{ expenseAccount.middayMeal }}</td>
                                 <td>{{ expenseAccount.mileage }}</td>
                                 <td> {# TODO : upgrade this display. #}
-                                    {% if expenseAccount.othersExpensesAccount|length == 0 %}
-                                        no other expense
-                                    {% else %}
-                                        {{ expenseAccount.othersExpensesAccount|length }}
-                                    {% endif %}
+                                    {{ expenseAccount.othersExpensesAccount|length }}
                                 </td>
                                 <td>{{ expenseAccount.totalAmount }} <span class="fa fa-eur"></span></td>
-                                <td><a href="#" class="btn btn-primary btn-sm">Details</a></td>
+                                <td>
+                                    <button type="button" role="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                            data-target="#expenseAccountDetail">
+                                        Details
+                                    </button>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -58,9 +60,146 @@
             </div>
             <div class="col-1">
                 <div class="btn-group-vertical" data-toggle="buttons">
-                    <a href="#" class="btn btn-outline-primary">New expense account</a>
+                    <button type="button" role="button" class="btn btn-outline-primary"
+                            data-toggle="modal" data-target="#newExpenseAccount">
+                        New expense account
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+    {# Modal to add new expense account in database. #}
+    <div class="modal fade" id="newExpenseAccount">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                {# Modal Header #}
+                <div class="modal-header">
+                    <h4 class="modal-title">New expense account</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                {# Modal body #}
+                <div class="modal-body">
+                    <form action="{{ path('prospector_expense_account_submit') }}" method="post" id="form">
+                        <fieldset>
+                            {# <legend class="text-center">New expense account</legend> #}
+                            {#  #}
+                            <div class="row">
+                                {# TODO : this input is not necessary because the control is when the user will submit the expense account. #}
+                                {#<div class="col-3">#}
+                                    {#<div class="form-group" id="monthGroup">#}
+                                        {#<label for="month">Month:</label>#}
+                                        {#<select id="month" class="form-control">#}
+                                            {#{% for key, value in dates %}#}
+                                                {#<option value="{{ value }}">{{ value }}</option>#}
+                                            {#{% endfor %}#}
+                                        {#</select>#}
+                                    {#</div>#}
+                                {#</div>#}
+                                <div class="col-4">
+                                    <div class="form-group" id="nightGroup">
+                                        <label for="night">Nights:</label>
+                                        <input type="number" class="form-control" id="night" aria-describedby="" placeholder="0" name="night">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group" id="middayMealGroup">
+                                        <label for="middayMeal">Midday meals:</label>
+                                        <input type="number" class="form-control" id="middayMeal" aria-describedby="" placeholder="0" name="middayMeal">
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="form-group" id="mileageGroup">
+                                        <label for="mileage">Mileages:</label>
+                                        <input type="number" class="form-control" id="mileage" aria-describedby="" placeholder="0" name="mileage">
+                                    </div>
+                                </div>
+                            </div>
+                            {# Other expenses account #}
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="button" role="button" id="addOtherExpenseAccount" class="btn btn-outline-secondary btn-md btn-block">
+                                        <span class="fa fa-plus-square"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="othersExpensesAccount">
+                                <hr />
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group" id="dateGroup">
+                                            <label for="date">Date:</label>
+                                            <input type="date" id="date" class="form-control" name="date" required/>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group" id="fileGroup">
+                                            <label for="file">File:</label>
+                                            <input type="file" id="file" class="form-control-file" name="file" required/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-group" id="descriptionGroup">
+                                            <label for="description">Description:</label>
+                                            <input type="text" id="description" class="form-control" name="description" required/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+                {# Modal footer #}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {# Modal to update expense account selected in table. #}
+    {# TODO : complete with AJAX request and submit with AJAX request #}
+    <div class="modal fade" id="expenseAccountDetail">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                {# Modal Header #}
+                <div class="modal-header">
+                    <h4 class="modal-title">A</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                {# Modal body #}
+                <div class="modal-body">
+                    modal content ...
+                </div>
+                {# Modal footer #}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        jQuery(document).ready(function() {
+            jQuery('#form').submit(function(e) {
+                e.preventDefault();
+            });
+        });
+        jQuery('#addOtherExpenseAccount').click(function() {
+            addOtherExpenseAccount();
+        });
+        // AJAX request.
+        jQuery('#submit').click(function() {
+
+        });
+
+        function addOtherExpenseAccount()
+        {
+            // TODO : complete this function
+        }
+    </script>
 {% endblock %}
