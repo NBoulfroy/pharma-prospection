@@ -6,7 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExpenseAccount;
-use AppBundle\Entity\OtherExpenseAccount;
+use ProspectorBundle\Form\ExpenseAccountType;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use \DateTime;
@@ -37,9 +37,16 @@ class DefaultController extends Controller
             'month' => $endDateEntry->format('F')
         );
 
+        // Creates an expense account.
+        $expenseAccount = new ExpenseAccount();
+        // $expenseAccount->setMonth();
+
+        $form = $this->createForm(ExpenseAccountType::class, $expenseAccount);
+
         return $this->render('prospector/expense.html.twig', array(
             'expensesAccount' => $expensesAccount,
-            'dates' => $dates
+            'dates' => $dates,
+            'form' => $form->createView()
         ));
     }
 
