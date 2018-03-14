@@ -15,11 +15,11 @@ use \DateInterval;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/expense-account", name="prospector_expense_account")
+     * @Route("/expenses-account", name="prospector_expenses_account")
      */
     public function expenseAction(Request $request)
     {
-        // TODO : USE SECURITY YML TO REDIRECT USER.
+        // TODO : USES SECURITY YML TO REDIRECT USER.
         if ($this->getUser() == null || empty($this->getUser())) {
             return $this->redirectToRoute('fos_user_security_login');
         }
@@ -37,25 +37,10 @@ class DefaultController extends Controller
             'month' => $endDateEntry->format('F')
         );
 
-//        echo '<pre>';
-//        var_dump($dates);
-//        echo '</pre>';
-//        die();
-
         return $this->render('prospector/expense.html.twig', array(
             'expensesAccount' => $expensesAccount,
             'dates' => $dates
         ));
-    }
-
-    /**
-     * @Route("/expense-account/submit", name="prospector_expense_account_submit")
-     */
-    public function expenseSubmitAction(Request $request)
-    {
-        if ($request->isXmlHttpRequest()) {
-
-        }
     }
 
     /**

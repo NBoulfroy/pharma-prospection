@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
-{% block title %}{{ parent() }} - your expenses account{% endblock %}
-
+{% block title %}{{ parent() }} - Your expenses account{% endblock %}
+{% block stylesheets %}{{ parent() }}{% endblock %}
 {% block elements %}
     <div class="mt-4">
         <div class="row">
@@ -48,10 +48,7 @@
                                 </td>
                                 <td>{{ expenseAccount.totalAmount }} <span class="fa fa-eur"></span></td>
                                 <td>
-                                    <button type="button" role="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                            data-target="#expenseAccountDetail">
-                                        Details
-                                    </button>
+                                    {# TODO : Link with a button sceen send to the selected expense account. #}
                                 </td>
                             </tr>
                         {% endfor %}
@@ -79,7 +76,7 @@
                 </div>
                 {# Modal body #}
                 <div class="modal-body">
-                    <form action="{{ path('prospector_expense_account_submit') }}" method="post" id="form">
+                    <form action="{{ path('prospector_expense_account_submit') }}" method="post" id="new">
                         <fieldset>
                             {# <legend class="text-center">New expense account</legend> #}
                             {#  #}
@@ -114,39 +111,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {# Other expenses account #}
-                            <div class="row">
-                                <div class="col-12">
-                                    <button type="button" role="button" id="addOtherExpenseAccount" class="btn btn-outline-secondary btn-md btn-block">
-                                        <span class="fa fa-plus-square"></span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="othersExpensesAccount">
-                                <hr />
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="form-group" id="dateGroup">
-                                            <label for="date">Date:</label>
-                                            <input type="date" id="date" class="form-control" name="date" required/>
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="form-group" id="fileGroup">
-                                            <label for="file">File:</label>
-                                            <input type="file" id="file" class="form-control-file" name="file" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group" id="descriptionGroup">
-                                            <label for="description">Description:</label>
-                                            <input type="text" id="description" class="form-control" name="description" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </fieldset>
                     </form>
                 </div>
@@ -157,49 +121,8 @@
                 </div>
             </div>
         </div>
-    </div>
-    {# Modal to update expense account selected in table. #}
-    {# TODO : complete with AJAX request and submit with AJAX request #}
-    <div class="modal fade" id="expenseAccountDetail">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                {# Modal Header #}
-                <div class="modal-header">
-                    <h4 class="modal-title">A</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                </div>
-                {# Modal body #}
-                <div class="modal-body">
-                    modal content ...
-                </div>
-                {# Modal footer #}
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    </div
 {% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
-    <script>
-        jQuery(document).ready(function() {
-            jQuery('#form').submit(function(e) {
-                e.preventDefault();
-            });
-        });
-        jQuery('#addOtherExpenseAccount').click(function() {
-            addOtherExpenseAccount();
-        });
-        // AJAX request.
-        jQuery('#submit').click(function() {
-
-        });
-
-        function addOtherExpenseAccount()
-        {
-            // TODO : complete this function
-        }
-    </script>
 {% endblock %}
