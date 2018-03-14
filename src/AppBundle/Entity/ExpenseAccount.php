@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use ProspectorBundle\Model\ExpenceAccount as BaseExpenseAccount;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="ProspectorBundle\Repository\ExpenseAccountRepository")
@@ -20,26 +21,36 @@ class ExpenseAccount extends BaseExpenseAccount
 
     /**
      * @ORM\Column(name="month", type="datetime", nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="datetime")
      */
     protected $month;
 
     /**
      * @ORM\Column(name="night", type="integer", nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="int")
      */
     protected $night;
 
     /**
      * @ORM\Column(name="middayMeal", type="integer", nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="int")
      */
     protected $middayMeal;
 
     /**
      * @ORM\Column(name="totalAmount", type="decimal", precision=10, scale=2, nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="float")
      */
     protected $totalAmount;
 
     /**
      * @ORM\Column(name="mileage", type="integer", nullable=false)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="int")
      */
     protected $mileage;
 
@@ -54,6 +65,8 @@ class ExpenseAccount extends BaseExpenseAccount
 
     /**
      * @ORM\Column(name="isSubmit", type="boolean", options={"default": false})
+     * @Assert\NotBlank()
+     * @Assert\Type(type="bool")
      */
     protected $isSubmit;
 }

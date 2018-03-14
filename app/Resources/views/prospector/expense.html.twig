@@ -92,32 +92,31 @@
                                         {#</select>#}
                                     {#</div>#}
                                 {#</div>#}
+                                {{ form_start(form) }}
                                 <div class="col-4">
                                     <div class="form-group" id="nightGroup">
-                                        <label for="night">Nights:</label>
-                                        <input type="number" class="form-control" id="night" aria-describedby="" placeholder="0" name="night">
+                                        {{ form_row(form.night, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group" id="middayMealGroup">
-                                        <label for="middayMeal">Midday meals:</label>
-                                        <input type="number" class="form-control" id="middayMeal" aria-describedby="" placeholder="0" name="middayMeal">
+                                        {{ form_row(form.middayMeal, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
                                     </div>
                                 </div>
                                 <div class="col-4">
                                     <div class="form-group" id="mileageGroup">
-                                        <label for="mileage">Mileages:</label>
-                                        <input type="number" class="form-control" id="mileage" aria-describedby="" placeholder="0" name="mileage">
+                                        {{ form_row(form.mileage, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
                                     </div>
                                 </div>
+                                {{ form_end(form) }}
                             </div>
                         </fieldset>
                     </form>
                 </div>
                 {# Modal footer #}
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="save">Save</button>
+                    <button type="button" class="btn btn-secondary" id="close" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -125,4 +124,76 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        window.onload = function() {
+            preventSubmit('new');
+            disabledButton('save');
+            document.getElementById('close').click = function() {
+                reset('new');
+            };
+            document.getElementById('expense_account_mileage').onchange = function() {
+                controlInput('expense_account_mileage', 'mileageGroup', 'decimal');
+            };
+        };
+
+        /**
+         *
+         * @param {string} id
+         */
+        function disabledButton(id) {
+            document.getElementById(id).setAttribute('disabled', 'disabled');
+        }
+
+        /**
+         *
+         * @param {string} id
+         */
+        function preventSubmit(id) {
+            document.getElementById(id).submit = function() {
+                return false;
+            }
+        }
+
+        /**
+         *
+         * @param {string} id
+         */
+        function reset(id) {
+            document.getElementById(id).reset();
+        }
+
+        /**
+         *
+         * @param {string} type
+         * @param {int|string} value
+         */
+        function controlValue(type, value) {
+            switch(type) {
+                case 'int':
+                    return /^[0-9]{1,}$/g.test(value);
+                case 'decimal':
+                    return /^[0-9]+(\.[0-9][0-9]?)?$/g.test(value);
+            }
+        }
+
+        /**
+         *
+         * @param {string} id
+         * @param {string} inputGroup
+         * @param {string} type
+         */
+        function controlInput(id, inputGroup, type) {
+            // Gets the value of the selected input passed in function's parameter.
+            let value = document.getElementById(id).value;
+
+            // Controls the value.
+            if (!controlValue(type, value)) {
+                // document.getElementById(inputGroup).classList.remove('has-success');
+                // document.getElementById(inputGroup).classList.add('has-danger');
+                document.getElementById('save').setAttribute('disabled', 'disabled');
+            } else {
+                document.getElementById('save').removeAttribute('disabled');
+            }
+        }
+    </script>
 {% endblock %}

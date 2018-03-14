@@ -39,7 +39,7 @@ class DefaultController extends Controller
 
         // Creates an expense account.
         $expenseAccount = new ExpenseAccount();
-        // $expenseAccount->setMonth();
+        // $expenseAccount->setMonth($endDateEntry);
 
         $form = $this->createForm(ExpenseAccountType::class, $expenseAccount);
 
