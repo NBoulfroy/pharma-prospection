@@ -92,7 +92,7 @@
                                         {#</select>#}
                                     {#</div>#}
                                 {#</div>#}
-                                {{ form_start(form) }}
+                                {{ form_start(form, { 'attr' : { 'class': 'newExpenseAccount' } }) }}
                                 <div class="col-4">
                                     <div class="form-group" id="nightGroup">
                                         {{ form_row(form.night, {'attr': {'class': 'form-control', 'placeholder': '0'}}) }}
@@ -128,72 +128,12 @@
         window.onload = function() {
             preventSubmit('new');
             disabledButton('save');
-            document.getElementById('close').click = function() {
+            document.getElementById('close').onclick = function() {
                 reset('new');
             };
             document.getElementById('expense_account_mileage').onchange = function() {
                 controlInput('expense_account_mileage', 'mileageGroup', 'decimal');
             };
         };
-
-        /**
-         *
-         * @param {string} id
-         */
-        function disabledButton(id) {
-            document.getElementById(id).setAttribute('disabled', 'disabled');
-        }
-
-        /**
-         *
-         * @param {string} id
-         */
-        function preventSubmit(id) {
-            document.getElementById(id).submit = function() {
-                return false;
-            }
-        }
-
-        /**
-         *
-         * @param {string} id
-         */
-        function reset(id) {
-            document.getElementById(id).reset();
-        }
-
-        /**
-         *
-         * @param {string} type
-         * @param {int|string} value
-         */
-        function controlValue(type, value) {
-            switch(type) {
-                case 'int':
-                    return /^[0-9]{1,}$/g.test(value);
-                case 'decimal':
-                    return /^[0-9]+(\.[0-9][0-9]?)?$/g.test(value);
-            }
-        }
-
-        /**
-         *
-         * @param {string} id
-         * @param {string} inputGroup
-         * @param {string} type
-         */
-        function controlInput(id, inputGroup, type) {
-            // Gets the value of the selected input passed in function's parameter.
-            let value = document.getElementById(id).value;
-
-            // Controls the value.
-            if (!controlValue(type, value)) {
-                // document.getElementById(inputGroup).classList.remove('has-success');
-                // document.getElementById(inputGroup).classList.add('has-danger');
-                document.getElementById('save').setAttribute('disabled', 'disabled');
-            } else {
-                document.getElementById('save').removeAttribute('disabled');
-            }
-        }
     </script>
 {% endblock %}

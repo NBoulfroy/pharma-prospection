@@ -30,7 +30,6 @@ function preventSubmit(id) {
 
 /**
  * Resets a form.
- * TODO : NOT WORKING RECENTLY.
  *
  * @param {string} id
  */
@@ -67,6 +66,8 @@ function controlInput(id, inputGroup, type) {
 
     // Controls the value.
     if (!controlValue(type, value)) {
+        // document.getElementById(inputGroup).classList.remove('has-success');
+        // document.getElementById(inputGroup).classList.add('has-danger');
         document.getElementById('save').setAttribute('disabled', 'disabled');
     } else {
         document.getElementById('save').removeAttribute('disabled');
