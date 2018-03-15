@@ -136,7 +136,7 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('assets/js/Form.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/Form.min.js') }}"></script>
     <script>
         window.onload = function() {
             let instance = new Form('new', 'save', ['add', 'close', 'cross']);
