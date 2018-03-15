@@ -72,7 +72,7 @@
                 {# Modal Header #}
                 <div class="modal-header">
                     <h4 class="modal-title">New expense account</h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <button type="button" class="close" id="cross" data-dismiss="modal">&times;</button>
                 </div>
                 {# Modal body #}
                 <div class="modal-body">
@@ -136,26 +136,10 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('assets/js/formLibrary.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/Form.js') }}"></script>
     <script>
         window.onload = function() {
-            // Disables the default behaviour of the form passed in parameter.
-            preventSubmit('new');
-            // Disables the button passed in parameter.
-            disabledButton('save');
-            // Resets the content of the form passed in parameter.
-            document.getElementById('add').onclick = function() {
-                reset('new');
-            };
-            // Resets the content of the form passed in parameter.
-            document.getElementById('close').onclick = function() {
-                reset('new');
-            };
-            // Controls the inputs of the form passed in parameter.
-            document.getElementById('expense_account_mileage').onchange = function() {
-                // controlInput('expense_account_mileage', 'mileageGroup', 'decimal');
-                controlForm('new');
-            };
+            let instance = new Form('new', 'save', ['add', 'close', 'cross']);
         };
     </script>
 {% endblock %}
