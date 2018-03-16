@@ -2,7 +2,7 @@
 
 namespace AppBundle\Entity;
 
-use ProspectorBundle\Model\ExpenceAccount as BaseExpenseAccount;
+use ProspectorBundle\Model\ExpenseAccount as BaseExpenseAccount;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -55,18 +55,15 @@ class ExpenseAccount extends BaseExpenseAccount
     protected $mileage;
 
     /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\OtherExpenseAccount")
-     * @ORM\JoinTable(name="include",
-     *      joinColumns={@ORM\JoinColumn(name="expenseAccount_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="otherExpenseAccount_id", referencedColumnName="id")}
-     * )
-     */
-    protected $othersExpensesAccount;
-
-    /**
      * @ORM\Column(name="isSubmit", type="boolean", options={"default": false})
      * @Assert\NotBlank()
      * @Assert\Type(type="bool")
      */
     protected $isSubmit;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Person")
+     * @ORM\JoinColumn(name="person_id", referencedColumnName="id")
+     */
+    protected $person;
 }

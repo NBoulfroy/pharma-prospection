@@ -4,7 +4,7 @@ namespace ProspectorBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-abstract class ExpenceAccount
+abstract class ExpenseAccount
 {
     /**
      * @var int $id
@@ -42,11 +42,6 @@ abstract class ExpenceAccount
     protected $mileage;
 
     /**
-     * @var Collection $othersExpansesAccount
-     */
-    protected $othersExpensesAccount;
-
-    /**
      * @var float $amount
      *
      * Total amount
@@ -57,6 +52,9 @@ abstract class ExpenceAccount
      * @var boolean $isSubmit
      */
     protected $isSubmit;
+
+    /** @var Object $person */
+    protected $person;
 
     /**
      * @return int
@@ -139,22 +137,6 @@ abstract class ExpenceAccount
     }
 
     /**
-     * @return Collection
-     */
-    public function getOthersExpensesAccount()
-    {
-        return $this->othersExpensesAccount;
-    }
-
-    /**
-     * @param Collection $othersExpensesAccount
-     */
-    public function setOthersExpensesAccount($othersExpensesAccount)
-    {
-        $this->othersExpensesAccount = $othersExpensesAccount;
-    }
-
-    /**
      * @return float
      */
     public function getTotalAmount()
@@ -165,7 +147,7 @@ abstract class ExpenceAccount
     /**
      * @param float $totalAmount
      */
-    public function setAmount($totalAmount)
+    public function setTotalAmount($totalAmount)
     {
         $this->totalAmount = $totalAmount;
     }
@@ -185,4 +167,21 @@ abstract class ExpenceAccount
     {
         $this->isSubmit = $isSubmit;
     }
+
+    /**
+     * @return Object
+     */
+    public function getPerson()
+    {
+        return $this->person;
+    }
+
+    /**
+     * @param Object $person
+     */
+    public function setPerson($person)
+    {
+        $this->person = $person;
+    }
+
 }

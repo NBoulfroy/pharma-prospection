@@ -20,7 +20,6 @@
                             <th scope="col">Night</th>
                             <th scope="col">Midday meal</th>
                             <th scope="col">Mileage</th>
-                            <th scope="col">Other Expenses</th>
                             <th scope="col">Total amount</th>
                             <th scope="col"></th>{# Show (link with button class) #}
                         </tr>
@@ -39,16 +38,14 @@
                                         {% endif %}
                                     </form>
                                 </td>
-                                <td>{{ expenseAccount.month|date('m') }}</td>
+                                {#<td>{{ expenseAccount.month|date('m') }}</td>#}
+                                <td>{{ expenseAccount.month|date('y-m-d') }}</td>
                                 <td>{{ expenseAccount.night }}</td>
                                 <td>{{ expenseAccount.middayMeal }}</td>
                                 <td>{{ expenseAccount.mileage }}</td>
-                                <td> {# TODO : upgrade this display. #}
-                                    {{ expenseAccount.othersExpensesAccount|length }}
-                                </td>
                                 <td>{{ expenseAccount.totalAmount }} <span class="fa fa-eur"></span></td>
                                 <td>
-                                    {# TODO : Link with a button sceen send to the selected expense account. #}
+                                    <a href="" class="btn btn-primary">Details</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -76,54 +73,37 @@
                 </div>
                 {# Modal body #}
                 <div class="modal-body">
-                    <form action="{{ path('prospector_expenses_account') }}" method="post" id="new">
-                        <fieldset>
-                            {# <legend class="text-center">New expense account</legend> #}
-                            {#  #}
-                            <div class="row">
-                                {# TODO : this input is not necessary because the control is when the user will submit the expense account. #}
-                                {#<div class="col-3">#}
-                                    {#<div class="form-group" id="monthGroup">#}
-                                        {#<label for="month">Month:</label>#}
-                                        {#<select id="month" class="form-control">#}
-                                            {#{% for key, value in dates %}#}
-                                                {#<option value="{{ value }}">{{ value }}</option>#}
-                                            {#{% endfor %}#}
-                                        {#</select>#}
-                                    {#</div>#}
-                                {#</div>#}
-                                {{ form_start(form, { 'attr' : { 'class': 'newExpenseAccount' } }) }}
-                                <div class="col-4">
-                                    <div class="form-group" id="nightGroup">
-                                        {{ form_row(form.night, {'attr': {
-                                            'class': 'form-control',
-                                            'placeholder': '0',
-                                            'data-type': 'decimal'
-                                        }}) }}
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group" id="middayMealGroup">
-                                        {{ form_row(form.middayMeal, {'attr': {
-                                            'class': 'form-control',
-                                            'placeholder': '0',
-                                            'data-type': 'decimal'
-                                        }}) }}
-                                    </div>
-                                </div>
-                                <div class="col-4">
-                                    <div class="form-group" id="mileageGroup">
-                                        {{ form_row(form.mileage, {'attr': {
-                                            'class': 'form-control',
-                                            'placeholder': '0',
-                                            'data-type': 'decimal'
-                                        }}) }}
-                                    </div>
-                                </div>
-                                {{ form_end(form) }}
+                    {{ form_start(form, { 'attr' : { 'class': 'newExpenseAccount' } }) }}
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group" id="nightGroup">
+                                {{ form_row(form.night, {'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': '0',
+                                    'data-type': 'decimal'
+                                }}) }}
                             </div>
-                        </fieldset>
-                    </form>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group" id="middayMealGroup">
+                                {{ form_row(form.middayMeal, {'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': '0',
+                                    'data-type': 'decimal'
+                                }}) }}
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group" id="mileageGroup">
+                                {{ form_row(form.mileage, {'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': '0',
+                                    'data-type': 'decimal'
+                                }}) }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
                 </div>
                 {# Modal footer #}
                 <div class="modal-footer">
@@ -136,10 +116,16 @@
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}
-    <script type="text/javascript" src="{{ asset('assets/js/Form.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/Ajax.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/Form.js') }}"></script>
     <script>
         window.onload = function() {
-            let instance = new Form('new', 'save', ['add', 'close', 'cross']);
+            let instance = new Form(
+                'newExpenseAccount',
+                'save',
+                ['add', 'close', 'cross'],
+                '{{ path('prospector_expenses_account') }}'
+            );
         };
     </script>
 {% endblock %}

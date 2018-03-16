@@ -6,7 +6,7 @@ use ProspectorBundle\Model\OtherExpenseAccount as BaseOtherExpenseAccount;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="ProspectorBundle\Repository\OtherExpenseRepository")
+ * @ORM\Entity
  * @ORM\Table(name="otherExpenseAccount")
  */
 class OtherExpenseAccount extends BaseOtherExpenseAccount
@@ -24,9 +24,9 @@ class OtherExpenseAccount extends BaseOtherExpenseAccount
     protected $date;
 
     /**
-     * @ORM\Column(name="designation", type="string", nullable=false)
+     * @ORM\Column(name="description", type="string", nullable=false)
      */
-    protected $designation;
+    protected $description;
 
     /**
      * @ORM\Column(name="amount", type="decimal", precision=10, scale=2, nullable=false)
@@ -34,12 +34,13 @@ class OtherExpenseAccount extends BaseOtherExpenseAccount
     protected $amount;
 
     /**
-     * @ORM\Column(name="fileName", type="string", nullable=false)
+     * @ORM\Column(name="file", type="string", nullable=false)
      */
-    protected $fileName;
+    protected $file;
 
     /**
-     * @ORM\Column(name="fileMime", type="string", nullable=false)
+     * @ORM\ManyToOne(targetEntity="ExpenseAccount")
+     * @ORM\JoinColumn(name="expenseAccount_id", referencedColumnName="id")
      */
-    protected $fileMime;
+    protected $expenseAccount;
 }

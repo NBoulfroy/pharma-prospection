@@ -26,7 +26,9 @@ class DefaultController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         // Gets expenses account from database owned by connected user.
-        $expensesAccount = $em->getRepository(ExpenseAccount::class)->getExpensesAccount($this->getUser()->getId());
+        $expensesAccount = $em->getRepository(ExpenseAccount::class)->findBy(array(
+            'person' => $this->getUser()->getId()
+        ));
 
         // Gets dates if user would create new expense account.
         $today = date('F');
@@ -42,6 +44,24 @@ class DefaultController extends Controller
         // $expenseAccount->setMonth($endDateEntry);
 
         $form = $this->createForm(ExpenseAccountType::class, $expenseAccount);
+
+        // If an AJAX request is send.
+        if ($request->isXmlHttpRequest()) {
+            $night = $request->get('expense_account')['night'];
+            $middayMeal = $request->get('expense_account')['middayMeal'];
+            $mileage = $request->get('expense_account')['mileage'];
+
+            $expenseAccount->setIsSubmit(false);
+            $expenseAccount->setMonth($endDateEntry);
+            $expenseAccount->setNight($night);
+            $expenseAccount->setMiddayMeal($middayMeal);
+            $expenseAccount->setMileage($mileage);
+            // TODO : COMPLETES THIS TREATMENT
+            $expenseAccount->setAmount(10.5);
+
+            $em->persist($expenseAccount);
+            $em->flush();
+        }
 
         return $this->render('prospector/expense.html.twig', array(
             'expensesAccount' => $expensesAccount,

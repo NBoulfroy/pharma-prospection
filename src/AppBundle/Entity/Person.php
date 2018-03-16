@@ -17,13 +17,4 @@ class Person extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @ORM\ManyToMany(targetEntity="AppBundle\Entity\ExpenseAccount")
-     * @ORM\JoinTable(name="submit",
-     *      joinColumns={@ORM\JoinColumn(name="person_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="expenseAccount_id", referencedColumnName="id")}
-     * )
-     */
-    private $expensesAccount;
 }
