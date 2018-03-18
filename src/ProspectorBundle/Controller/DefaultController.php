@@ -59,8 +59,8 @@ class DefaultController extends Controller
             $expenseAccount->setTotalAmount(9.99);
             $expenseAccount->setPerson($this->getUser());
 
-//            $em->persist($expenseAccount);
-//            $em->flush();
+            $em->persist($expenseAccount);
+            $em->flush();
 
             // Gets the HTML content with the new values.
             $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
