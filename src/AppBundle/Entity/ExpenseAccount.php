@@ -55,7 +55,7 @@ class ExpenseAccount extends BaseExpenseAccount
     protected $mileage;
 
     /**
-     * @ORM\Column(name="isSubmit", type="boolean", options={"default": false})
+     * @ORM\Column(name="isSubmit", type="boolean", options={"default": false}, nullable=true)
      * @Assert\NotBlank()
      * @Assert\Type(type="bool")
      */

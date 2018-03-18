@@ -4,6 +4,7 @@ namespace ProspectorBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExpenseAccount;
 use ProspectorBundle\Form\ExpenseAccountType;
@@ -41,7 +42,6 @@ class DefaultController extends Controller
 
         // Creates an expense account.
         $expenseAccount = new ExpenseAccount();
-        // $expenseAccount->setMonth($endDateEntry);
 
         $form = $this->createForm(ExpenseAccountType::class, $expenseAccount);
 
@@ -51,19 +51,32 @@ class DefaultController extends Controller
             $middayMeal = $request->get('expense_account')['middayMeal'];
             $mileage = $request->get('expense_account')['mileage'];
 
-            $expenseAccount->setIsSubmit(false);
-            $expenseAccount->setMonth($endDateEntry);
+            // $expenseAccount->setIsSubmit(false);
+            $expenseAccount->setMonth(new Datetime(date('Y-m-d')));
             $expenseAccount->setNight($night);
             $expenseAccount->setMiddayMeal($middayMeal);
             $expenseAccount->setMileage($mileage);
-            // TODO : COMPLETES THIS TREATMENT
-            $expenseAccount->setAmount(10.5);
+            $expenseAccount->setTotalAmount(9.99);
+            $expenseAccount->setPerson($this->getUser());
 
             $em->persist($expenseAccount);
             $em->flush();
+
+            // Gets the HTML content with the new values.
+            $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
+                'month' => $endDateEntry,
+                'night' => $night,
+                'middayMeal' => $middayMeal,
+                'mileage' => $mileage,
+                'totalAmount' => $totalAmount = 10.5,
+                'id' => $expenseAccount->getId()
+            ));
+
+            // Returns the HTML content.
+            return new Response($response);
         }
 
-        return $this->render('prospector/expense.html.twig', array(
+        return $this->render('prospector/expenses.html.twig', array(
             'expensesAccount' => $expensesAccount,
             'dates' => $dates,
             'form' => $form->createView()

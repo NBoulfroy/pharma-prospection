@@ -28,7 +28,7 @@
                         {% for expenseAccount in expensesAccount %}
                             <tr>
                                 <td> {# TODO : upgrade this display. #}
-                                    <form method="POST" post=""> {# TODO : complete this form. #}
+                                    <form method="POST" action=""> {# TODO : complete this form. #}
                                         {% if expenseAccount.isSubmit == 0 or expenseAccount.isSubmit == false %}
                                             <input type="checkbox" name="check" id="check"
                                                    class="custom-checkbox" />
