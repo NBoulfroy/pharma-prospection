@@ -155,7 +155,7 @@ abstract class ExpenseAccount
     /**
      * @return bool
      */
-    public function isSubmit()
+    public function getIsSubmit()
     {
         return $this->isSubmit;
     }
@@ -183,5 +183,4 @@ abstract class ExpenseAccount
     {
         $this->person = $person;
     }
-
 }

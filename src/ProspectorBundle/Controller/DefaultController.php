@@ -59,16 +59,17 @@ class DefaultController extends Controller
             $expenseAccount->setTotalAmount(9.99);
             $expenseAccount->setPerson($this->getUser());
 
-            $em->persist($expenseAccount);
-            $em->flush();
+//            $em->persist($expenseAccount);
+//            $em->flush();
 
             // Gets the HTML content with the new values.
             $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
+                'isSubmit' => $expenseAccount->getIsSubmit(),
                 'month' => $endDateEntry,
                 'night' => $night,
                 'middayMeal' => $middayMeal,
                 'mileage' => $mileage,
-                'totalAmount' => $totalAmount = 10.5,
+                'totalAmount' => $totalAmount = $expenseAccount->getTotalAmount(),
                 'id' => $expenseAccount->getId()
             ));
 
