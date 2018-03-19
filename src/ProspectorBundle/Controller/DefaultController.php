@@ -51,30 +51,11 @@ class DefaultController extends Controller
             $middayMeal = $request->get('expense_account')['middayMeal'];
             $mileage = $request->get('expense_account')['mileage'];
 
-            // $expenseAccount->setIsSubmit(false);
-            $expenseAccount->setMonth(new Datetime(date('Y-m-d')));
-            $expenseAccount->setNight($night);
-            $expenseAccount->setMiddayMeal($middayMeal);
-            $expenseAccount->setMileage($mileage);
-            $expenseAccount->setTotalAmount(9.99);
-            $expenseAccount->setPerson($this->getUser());
-
-            $em->persist($expenseAccount);
-            $em->flush();
-
-            // Gets the HTML content with the new values.
-            $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
-                'isSubmit' => $expenseAccount->getIsSubmit(),
-                'month' => $endDateEntry,
-                'night' => $night,
-                'middayMeal' => $middayMeal,
-                'mileage' => $mileage,
-                'totalAmount' => $totalAmount = $expenseAccount->getTotalAmount(),
-                'id' => $expenseAccount->getId()
-            ));
+            // Controls the variables content.
+            $this->verification(array($night, $middayMeal, $mileage));
 
             // Returns the HTML content.
-            return new Response($response);
+            return new Response($this->newExpenseAccount($night, $middayMeal, $mileage, $endDateEntry, $expenseAccount));
         }
 
         return $this->render('prospector/expenses.html.twig', array(
@@ -82,6 +63,64 @@ class DefaultController extends Controller
             'dates' => $dates,
             'form' => $form->createView()
         ));
+    }
+
+    /**
+     * Controls if the data contains in an array passed in parameter are correct.
+     *
+     * @param array $array
+     * @return Response
+     */
+    private function verification($array)
+    {
+        foreach ($array as $item) {
+            if (!ExpenseAccount::control($item)) {
+                return new Response($this->renderView('prospector/ajax/newExpense.html.twig', array(
+                    'error' => true
+                )));
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * AJAX treatment which returns a vie with the new expense account.
+     *
+     * @param int $night - number of nights
+     * @param int $middayMeal - number of midday meals
+     * @param float $mileage - number of mileages
+     * @param \Datetime $today - date when the new expense account has been stored in database.
+     * @param ExpenseAccount $expenseAccount - ExpenseAccount entity object
+     * @return string
+     */
+    private function newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount)
+    {
+        // $expenseAccount->setIsSubmit(false);
+        $expenseAccount->setMonth(new Datetime(date('Y-m-d')));
+        $expenseAccount->setNight($night);
+        $expenseAccount->setMiddayMeal($middayMeal);
+        $expenseAccount->setMileage($mileage);
+        $expenseAccount->setTotalAmount(9.99);
+        $expenseAccount->setIsSubmit(false);
+        $expenseAccount->setPerson($this->getUser());
+
+        $this->getDoctrine()->getManager()->persist($expenseAccount);
+        $this->getDoctrine()->getManager()->flush();
+
+        // Gets the HTML content with the new values.
+        $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
+            'error' => false,
+            'isSubmit' => $expenseAccount->getIsSubmit(),
+            'month' => $today,
+            'night' => $night,
+            'middayMeal' => $middayMeal,
+            'mileage' => $mileage,
+            'totalAmount' => $totalAmount = $expenseAccount->getTotalAmount(),
+            'id' => $expenseAccount->getId()
+        ));
+
+        return $response;
     }
 
     /**

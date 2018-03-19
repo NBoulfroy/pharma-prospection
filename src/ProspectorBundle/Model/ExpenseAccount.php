@@ -4,7 +4,7 @@ namespace ProspectorBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-abstract class ExpenseAccount
+abstract class ExpenseAccount implements IControl
 {
     /**
      * @var int $id
@@ -182,5 +182,14 @@ abstract class ExpenseAccount
     public function setPerson($person)
     {
         $this->person = $person;
+    }
+
+    public static function control($param)
+    {
+        if(!preg_match('/^[0-9]+(\.[0-9][0-9]?)?$/', $param)) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
