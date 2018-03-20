@@ -184,7 +184,14 @@ abstract class ExpenseAccount implements IControl
         $this->person = $person;
     }
 
-    public static function control($param)
+    /**
+     * Controls variable.
+     *
+     * @param string $param - string variable which contains data
+     * @param null $case - empty this time
+     * @return bool
+     */
+    public static function control($param, $case = null)
     {
         if(!preg_match('/^[0-9]+(\.[0-9][0-9]?)?$/', $param)) {
             return false;
