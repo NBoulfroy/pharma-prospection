@@ -1,66 +1,51 @@
 {% extends 'base.html.twig' %}
+
 {% block title %}{{ parent() }} - Your expenses account{% endblock %}
-{% block stylesheets %}{{ parent() }}{% endblock %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a href="" role="link" class="nav-link" id="add" data-toggle="modal" data-target="#newExpenseAccount">
+            <span class="fa fa-plus"></span> New expense account
+        </a>
+    </li>
+{% endblock %}
+
 {% block elements %}
     <div class="mt-4">
-        <div class="row">
-            <div class="col-11">
-                {# Display a message if the user doesn't have expenses account. #}
-                {% if expensesAccount is null or expensesAccount is empty %}
-                    <div class="alert alert-dismissible alert-danger text-center">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <span class="font-weight-bold">Warning:</span> no expenses account save on your account.
-                    </div>
-                {% endif %}
-                <div class="message"></div>
-                <table class="table table-hover text-center">
-                    <thead>
-                        <tr>
-                            <th scope="col">Submit</th>
-                            <th scope="col">Month</th>
-                            <th scope="col">Night</th>
-                            <th scope="col">Midday meal</th>
-                            <th scope="col">Mileage</th>
-                            <th scope="col">Total amount</th>
-                            <th scope="col"></th>{# Show (link with button class) #}
-                        </tr>
-                    </thead>
-                    <tbody class="data">
-                        {% for expenseAccount in expensesAccount %}
-                            <tr>
-                                <td> {# TODO : upgrade this display. #}
-                                    <form method="POST" action=""> {# TODO : complete this form. #}
-                                        {% if expenseAccount.isSubmit == 0 or expenseAccount.isSubmit == false %}
-                                            <input type="checkbox" name="check" id="check"
-                                                   class="custom-checkbox" />
-                                        {% else %}
-                                            <input type="checkbox" name="check" id="check"
-                                                   checked class="custom-checkbox" disabled="disabled"/>
-                                        {% endif %}
-                                    </form>
-                                </td>
-                                {#<td>{{ expenseAccount.month|date('m') }}</td>#}
-                                <td>{{ expenseAccount.month|date('y-m-d') }}</td>
-                                <td>{{ expenseAccount.night }}</td>
-                                <td>{{ expenseAccount.middayMeal }}</td>
-                                <td>{{ expenseAccount.mileage }}</td>
-                                <td>{{ expenseAccount.totalAmount }} <span class="fa fa-eur"></span></td>
-                                <td>
-                                    <a href="" class="btn btn-primary">Details</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            <div class="col-1">
-                <div class="btn-group-vertical" data-toggle="buttons">
-                    <button type="button" role="button" class="btn btn-outline-primary" id="add"
-                            data-toggle="modal" data-target="#newExpenseAccount">
-                        New expense account
-                    </button>
+        <div class="col-12">
+            {# Display a message if the user doesn't have expenses account. #}
+            {% if expensesAccount is null or expensesAccount is empty %}
+                <div class="alert alert-dismissible alert-danger text-center">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <span class="font-weight-bold">Warning:</span> no expenses account save on your account.
                 </div>
-            </div>
+            {% endif %}
+            <div class="message"></div>
+            <table class="table table-hover text-center">
+                <thead>
+                <tr>
+                    {#<th scope="col">Submit</th>#}
+                    <th scope="col">Month</th>
+                    <th scope="col">Night</th>
+                    <th scope="col">Midday meal</th>
+                    <th scope="col">Mileage</th>
+                    <th scope="col">Total amount</th>
+                    <th scope="col"></th>{# Show (link with button class) #}
+                </tr>
+                </thead>
+                <tbody class="data">
+                {% for expenseAccount in expensesAccount %}
+                    <tr>
+                        <td>{{ expenseAccount.month|date('Y-m-d') }}</td>
+                        <td>{{ expenseAccount.night }}</td>
+                        <td>{{ expenseAccount.middayMeal }}</td>
+                        <td>{{ expenseAccount.mileage }}</td>
+                        <td>{{ expenseAccount.totalAmount }}</td> {# <span class="fa fa-dollar"></span> #}
+                        <td><a href="{{ expenseAccount.id }}" class="btn btn-primary">Details</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
     {# Modal to add new expense account in database. #}
@@ -105,6 +90,7 @@
                         </div>
                     </div>
                     {{ form_end(form) }}
+                    <div id="wrongData"></div>
                 </div>
                 {# Modal footer #}
                 <div class="modal-footer">
@@ -127,7 +113,9 @@
                 'save',
                 ['add', 'close', 'cross'],
                 '{{ path('prospector_expenses_account') }}',
-                'data'
+                'data',
+                'tableDetail',
+                '{{ path('prospector_expenses_account') }}'
             );
         };
     </script>

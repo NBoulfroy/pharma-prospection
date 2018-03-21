@@ -5,6 +5,7 @@ namespace ProspectorBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExpenseAccount;
 use ProspectorBundle\Form\ExpenseAccountType;
@@ -52,10 +53,17 @@ class DefaultController extends Controller
             $mileage = $request->get('expense_account')['mileage'];
 
             // Controls the variables content.
-            $this->verification(array($night, $middayMeal, $mileage));
+            $verification = $this->verification(array($night, $middayMeal, $mileage));
 
-            // Returns the HTML content.
-            return new Response($this->newExpenseAccount($night, $middayMeal, $mileage, $endDateEntry, $expenseAccount));
+            // If verification returns false, processing to add new expense account is canceled.
+            if ($verification != 0) {
+                $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
+            } else {
+                $json = $this->newExpenseAccount($night, $middayMeal, $mileage, $endDateEntry, $expenseAccount);
+            }
+
+            // Returns JSON.
+            return new Response($json);
         }
 
         return $this->render('prospector/expenses.html.twig', array(
@@ -69,19 +77,21 @@ class DefaultController extends Controller
      * Controls if the data contains in an array passed in parameter are correct.
      *
      * @param array $array
-     * @return Response
+     * @return int
      */
     private function verification($array)
     {
+        $error = 0;
+
         foreach ($array as $item) {
-            if (!ExpenseAccount::control($item)) {
-                return new Response($this->renderView('prospector/ajax/newExpense.html.twig', array(
-                    'error' => true
-                )));
+            $verification = ExpenseAccount::control($item);
+
+            if (!$verification) {
+                $error += 1;
             }
         }
 
-        return null;
+        return $error;
     }
 
     /**
@@ -92,12 +102,12 @@ class DefaultController extends Controller
      * @param float $mileage - number of mileages
      * @param \Datetime $today - date when the new expense account has been stored in database.
      * @param ExpenseAccount $expenseAccount - ExpenseAccount entity object
-     * @return string
+     * @return array
      */
     private function newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount)
     {
         // $expenseAccount->setIsSubmit(false);
-        $expenseAccount->setMonth(new Datetime(date('Y-m-d')));
+        $expenseAccount->setMonth(new Datetime(date('y-m-d')));
         $expenseAccount->setNight($night);
         $expenseAccount->setMiddayMeal($middayMeal);
         $expenseAccount->setMileage($mileage);
@@ -105,22 +115,22 @@ class DefaultController extends Controller
         $expenseAccount->setIsSubmit(false);
         $expenseAccount->setPerson($this->getUser());
 
-        $this->getDoctrine()->getManager()->persist($expenseAccount);
-        $this->getDoctrine()->getManager()->flush();
+//        $this->getDoctrine()->getManager()->persist($expenseAccount);
+//        $this->getDoctrine()->getManager()->flush();
 
-        // Gets the HTML content with the new values.
-        $response = $this->renderView('prospector/ajax/newExpense.html.twig', array(
-            'error' => false,
-            'isSubmit' => $expenseAccount->getIsSubmit(),
-            'month' => $today,
-            'night' => $night,
-            'middayMeal' => $middayMeal,
-            'mileage' => $mileage,
-            'totalAmount' => $totalAmount = $expenseAccount->getTotalAmount(),
-            'id' => $expenseAccount->getId()
-        ));
+        $response = array(
+            'status' => 'success',
+            'data' => array(
+                $expenseAccount->getMonth()->format('Y-m-d'),
+                $expenseAccount->getNight(),
+                $expenseAccount->getMiddayMeal(),
+                $expenseAccount->getMileage(),
+                $expenseAccount->getTotalAmount(),
+                $expenseAccount->getId(),
+            ),
+        );
 
-        return $response;
+        return json_encode($response);
     }
 
     /**

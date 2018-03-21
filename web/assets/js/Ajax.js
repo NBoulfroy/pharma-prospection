@@ -3,32 +3,40 @@
  *
  * @Project : Pharma-Prospection
  * @File    : web/assets/js/Form.js
- * @Version : 1.0
+ * @Version : 1.2
  * @Author  : BOULFROY Nicolas
- * @Create  : 2018/03/15
+ * @Create  : 2018/03/21
  */
 
 /**
  * Ajax class constructor.
  *
- * @param {string} method
- * @param {string} url
- * @param {*} data
- * @param {ActiveX.IXMLDOMElement} dataClass
+ * @param {ActiveX.IXMLDOMElement} form - class of
+ * @param {null|string} modal - modal class
+ * @param {string} method - method attribute value of the form
+ * @param {string} url - action attribute value of the form
+ * @param {*} data - FormData
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the data must be added
+ * @param {null|string} type - what use case is used to implement data in HTML template
+ * @param {null|string} link - the <a></a> href content attribute
  * @constructor
  */
-function Ajax(method, url, data, dataClass) {
+function Ajax(modal = null, form, method, url, data, dataClass, type = null, link = null) {
+    this.modal = modal;
+    this.form = form;
     this.method = method;
     this.url = url;
     this.data = data;
     this.dataClass = dataClass;
+    this.type = type;
+    this.link = link;
     this._query();
 }
 
 /**
  * Creates an AJAX object.
  *
- * @returns {*}
+ * @returns {XMLHttpRequest|ActiveXObject}
  * @private
  */
 Ajax.prototype._createRequest = function() {
@@ -46,7 +54,7 @@ Ajax.prototype._createRequest = function() {
 /**
  * Manages displaying if the AJAX request has been a success status.
  *
- * @param {ActiveX.IXMLDOMElement} div
+ * @param {ActiveX.IXMLDOMElement} div - where the message must be added in HTML page
  * @private
  */
 Ajax.prototype._displayMessageSuccess = function(div) {
@@ -70,7 +78,7 @@ Ajax.prototype._displayMessageSuccess = function(div) {
 /**
  * Manages displaying if the AJAX request has been an error status.
  *
- * @param {ActiveX.IXMLDOMElement} div
+ * @param {ActiveX.IXMLDOMElement} div - where the message must be added in HTML page
  * @private
  */
 Ajax.prototype._displayMessageError = function(div) {
@@ -94,7 +102,7 @@ Ajax.prototype._displayMessageError = function(div) {
 /**
  * Manages displaying about the AJAX request at the top of the template.
  *
- * @param {string} type
+ * @param {string} type - the response type (success / warning)
  * @private
  */
 Ajax.prototype._displayMessage = function(type) {
@@ -118,22 +126,121 @@ Ajax.prototype._displayMessage = function(type) {
 };
 
 /**
- * Displays response in template.
  *
- * @param {ActiveX.IXMLDOMElement} dataClass
- * @param {string} response
+ *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - data from AJAX request
+ * @param {int} max - maximum of elements in json
  * @private
  */
-Ajax.prototype._displayResponse = function(dataClass, response) {
-    dataClass.insertAdjacentHTML('beforeend', response);
+Ajax.prototype._displayTable = function(dataClass, response, max) {
+    let td = document.createElement('tr');
+    let element;
+
+    for (let i = 0; i < max; i++) {
+        let element = document.createElement('td');
+
+        element.innerHTML = response.data[i];
+        td.appendChild(element);
+    }
+
+    dataClass.appendChild(td);
 };
 
+/**
+ *
+ *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - data from AJAX request
+ * @param {int} max - maximum of elements in json
+ * @param {string} href - for href <a></a> HTML element
+ * @private
+ */
+Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
+    let td = document.createElement('tr');
+    let element;
+
+    for (let i = 0; i < max; i++) {
+        let element = document.createElement('td');
+
+        if (i < (max - 1)) {
+            element.innerHTML = response.data[i];
+        } else {
+            let link = document.createElement('a');
+            let url = href + '/' + response.data[i];
+
+            link.setAttribute('class', 'btn btn-primary');
+            link.innerHTML = 'Details';
+            link.setAttribute('href', url);
+
+            element.appendChild(link);
+        }
+
+        td.appendChild(element);
+    }
+
+    dataClass.appendChild(td);
+};
+
+/**
+ * Displays response in template.
+ *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - response returns by AJAX request
+ * @param {string} type - type of HTML generation (simple table, table with detail button, table with delete button)
+ * @param {null|string} link - for href <a></a> HTML element
+ * @private
+ */
+Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
+    let max = response.data.length;
+
+    switch (type) {
+        default:
+            break;
+        case 'tableDetail':
+            Ajax.prototype._displayTableDetail(dataClass, response, max, link);
+            break;
+        case 'tableDelete':
+            break;
+    }
+};
+
+/**
+ * Displays wrong data message.
+ *
+ * @param {ActiveX.IXMLDOMElement} form
+ * @private
+ */
+Ajax.prototype._displayWrongData = function(form) {
+    //
+    let div = document.getElementById('wrongData');
+    div.innerHTML = '';
+
+    // Creates a p HTML element.
+    let p = document.createElement('p');
+    p.setAttribute('class', 'text-center');
+    p.style.color = '#85001e';
+    p.innerHTML = 'You have entered wrong data.';
+
+    // Appends p in div.
+    div.appendChild(p);
+};
+
+/**
+ * AJAX request senders.
+ *
+ * @private
+ */
 Ajax.prototype._query = function() {
     let request = this._createRequest();
+    let form = this.form;
+    let modal = this.modal;
     let method = this.method;
     let url = this.url;
     let data = this.data;
     let dataClass = this.dataClass;
+    let type = this.type;
+    let link = this.link;
 
     // Opens a connection.
     request.open(method, url);
@@ -143,12 +250,21 @@ Ajax.prototype._query = function() {
     request.send(data);
 
     request.onload = function() {
-        // Succes
         if (request.status == 200) {
-            Ajax.prototype._displayResponse(dataClass, request.responseText);
-            Ajax.prototype._displayMessage('success');
+            let response = JSON.parse(request.responseText);
+
+            if (response['status'] != 'success') {
+                Ajax.prototype._displayWrongData();
+            } else {
+                // Adds new data in the table.
+                Ajax.prototype._displayResponse(dataClass, response, type, link);
+                // Displays the message success at the top of the page.
+                Ajax.prototype._displayMessage('success');
+                // Closes modal.
+                jQuery('#' + modal).modal('toggle');
+            }
         } else {
-            Ajax.prototype._displayMessage('success');
+            Ajax.prototype._displayMessage('error');
         }
     }
 };

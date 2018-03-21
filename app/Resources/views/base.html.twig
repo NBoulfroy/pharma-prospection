@@ -20,6 +20,7 @@
             {% if app.user %}
                 <div id="navbarNavDropdown" class="navbar-collapse collapse">
                     <ul class="navbar-nav ml-auto">
+                        {% block navbar %}{% endblock %}
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <span class="fa fa-user" aria-hidden="true"></span> Profile

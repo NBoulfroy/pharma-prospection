@@ -3,24 +3,26 @@
  *
  * @Project : Pharma-Prospection
  * @File    : web/assets/js/Form.js
- * @Version : 1.2
+ * @Version : 1.3
  * @Author  : BOULFROY Nicolas
  * @Create  : 2018/03/15
- * @Update  : 2018/03/18
+ * @Update  : 2018/03/21
  */
 
 /**
  * Form class constructor.
  *
- * @param {string} modal
- * @param {string} formClass
- * @param {string} submitButton
- * @param {array} buttons
- * @param {string} url
- * @param {string} dataClass
+ * @param {null|string} modal - modal class
+ * @param {string} formClass - form class
+ * @param {string} submitButton - button's form which is used to submit the form
+ * @param {array} buttons - others buttons used to display the form for example
+ * @param {string} url - address to which the AJAX request must go
+ * @param {string} dataClass - where the data must be added
+ * @param {null|string} type - what use case is used to implement data in HTML template
+ * @param {null|string} link - the <a></a> href content attribute
  * @constructor
  */
-function Form(modal, formClass, submitButton, buttons, url, dataClass) {
+function Form(modal = null, formClass, submitButton, buttons, url, dataClass, type = null, link = null) {
     this.modal = modal;
     this.class = formClass;
     this.submitButton = submitButton;
@@ -28,6 +30,8 @@ function Form(modal, formClass, submitButton, buttons, url, dataClass) {
     this.url = url;
     this.dataClass = document.getElementsByClassName(dataClass)[0];
     this.form = document.getElementsByClassName(this.class)[0];
+    this.type = type;
+    this.link = link;
     this._events();
 }
 
@@ -112,11 +116,14 @@ Form.prototype.disabledButton = function() {
  */
 Form.prototype._events = function() {
     let modal = this.modal;
-    let formClass = this.form.getAttribute('class');
+    let form = this.form;
+    let formClass = form.getAttribute('class');
     let inputs = this.form.getElementsByTagName('input');
     let buttons = this.buttons;
     let url = this.url;
     let dataClass = this.dataClass;
+    let type = this.type;
+    let link = this.link;
 
     // Disables the "submit" button.
     this.disabledButton();
@@ -142,8 +149,6 @@ Form.prototype._events = function() {
         }
 
         // Creates an AJAX object and realizes the treatment (back-end and front-end).
-        let ajax = new Ajax('POST', url, data, dataClass);
-        // Closes modal.
-        jQuery('#' + modal).modal('toggle');
+        let ajax = new Ajax(modal, form, 'POST', url, data, dataClass, type, link);
     });
 };
