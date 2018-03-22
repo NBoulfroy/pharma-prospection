@@ -20,7 +20,12 @@ class Power extends BasePower
     protected $id;
 
     /**
-     * @ORM\Column(name="cost", type="decimal", precision=10, scale=2, nullable=false)
+     * @ORM\Column(name="designation", type="string", length=3, nullable=false)
+     */
+    protected $designation;
+
+    /**
+     * @ORM\Column(name="cost", type="decimal", precision=10, scale=3, nullable=false)
      * @Assert\NotBlank()
      * @Assert\Type(type="float")
      */

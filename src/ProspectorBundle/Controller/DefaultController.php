@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExpenseAccount;
 use ProspectorBundle\Form\ExpenseAccountType;
+use AppBundle\Entity\Parameter;
+use AppBundle\Entity\Power;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use \DateTime;
@@ -27,6 +29,7 @@ class DefaultController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
+
         // Gets expenses account from database owned by connected user.
         $expensesAccount = $em->getRepository(ExpenseAccount::class)->findBy(array(
             'person' => $this->getUser()->getId()
@@ -106,17 +109,32 @@ class DefaultController extends Controller
      */
     private function newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount)
     {
-        // $expenseAccount->setIsSubmit(false);
         $expenseAccount->setMonth(new Datetime(date('y-m-d')));
         $expenseAccount->setNight($night);
         $expenseAccount->setMiddayMeal($middayMeal);
         $expenseAccount->setMileage($mileage);
-        $expenseAccount->setTotalAmount(9.99);
+
+        $nightPrice = floatval(
+            $this->getDoctrine()->getRepository(Parameter::class)
+                ->getPrice('night')[0]['value']
+        );
+        $middayMealPrice = floatval(
+            $this->getDoctrine()->getRepository(Parameter::class)
+                ->getPrice('middayMeal')[0]['value']
+        );
+        $mileagePrice = floatval(
+            $this->getDoctrine()->getRepository(Power::class)
+                ->getPowerCost($this->getUser()->getId())[0]['cost']
+        );
+
+        $totalAmount = $expenseAccount->amount($nightPrice, $middayMealPrice, $mileagePrice);
+
+        $expenseAccount->setTotalAmount($totalAmount);
         $expenseAccount->setIsSubmit(false);
         $expenseAccount->setPerson($this->getUser());
 
-//        $this->getDoctrine()->getManager()->persist($expenseAccount);
-//        $this->getDoctrine()->getManager()->flush();
+        $this->getDoctrine()->getManager()->persist($expenseAccount);
+        $this->getDoctrine()->getManager()->flush();
 
         $response = array(
             'status' => 'success',

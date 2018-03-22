@@ -48,7 +48,19 @@ Form.prototype._controlValue = function(type, value) {
         case 'int':
             return /^[0-9]{1,}$/g.test(value);
         case 'decimal':
-            return /^[0-9]+(\.[0-9][0-9]?)?$/g.test(value);
+            return /^([0-9]{1,})+(\.[0-9]{1,}?)?$/g.test(value);
+    }
+};
+
+Form.prototype._resetColorInput = function(form) {
+    for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
+        form.getElementsByTagName('input')[i].style.borderColor = '#d3d3d3';
+    }
+};
+
+Form.prototype._displayWrongColor = function(form) {
+    for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
+        form.getElementsByTagName('input')[i].style.borderColor = 'red';
     }
 };
 
@@ -77,7 +89,8 @@ Form.prototype._controlInput = function(type, value) {
  * @private
  */
 Form.prototype._controlForm = function() {
-    let inputs = this.form.getElementsByTagName('input');
+    let form = this.form;
+    let inputs = form.getElementsByTagName('input');
 
     for (let i = 0; i < inputs.length - 1; i++) {
         if (!Form.prototype._controlInput(
@@ -86,8 +99,11 @@ Form.prototype._controlForm = function() {
                 // If value is '', return 0, else return the value contains in the input.
                 (inputs[i].value != '') ? inputs[i].value : 0
             )) {
+            Form.prototype._displayWrongColor(form);
             break;
         }
+
+        Form.prototype._resetColorInput(form);
     }
 };
 
@@ -137,6 +153,7 @@ Form.prototype._events = function() {
     for (let k = 0; k < buttons.length; k++) {
         document.getElementById(buttons[k]).addEventListener('click', function() {
             document.getElementsByClassName(formClass)[0].reset();
+            Form.prototype._resetColorInput(form);
         });
     }
 

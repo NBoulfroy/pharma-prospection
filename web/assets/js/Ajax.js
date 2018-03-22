@@ -205,25 +205,22 @@ Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
     }
 };
 
+Ajax.prototype._displayGoodData = function(form) {
+    for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
+        form.getElementsByTagName('input')[i].style.borderColor = '#d3d3d3';
+    }
+};
+
 /**
- * Displays wrong data message.
+ * Changes all inputs into the form.
  *
  * @param {ActiveX.IXMLDOMElement} form
  * @private
  */
 Ajax.prototype._displayWrongData = function(form) {
-    //
-    let div = document.getElementById('wrongData');
-    div.innerHTML = '';
-
-    // Creates a p HTML element.
-    let p = document.createElement('p');
-    p.setAttribute('class', 'text-center');
-    p.style.color = '#85001e';
-    p.innerHTML = 'You have entered wrong data.';
-
-    // Appends p in div.
-    div.appendChild(p);
+    for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
+        form.getElementsByTagName('input')[i].style.borderColor = 'red';
+    }
 };
 
 /**
@@ -254,8 +251,11 @@ Ajax.prototype._query = function() {
             let response = JSON.parse(request.responseText);
 
             if (response['status'] != 'success') {
-                Ajax.prototype._displayWrongData();
+                // Displays wrong data.
+                Ajax.prototype._displayWrongData(form);
             } else {
+                // Resets the inputs form style.
+                Ajax.prototype._displayGoodData(form);
                 // Adds new data in the table.
                 Ajax.prototype._displayResponse(dataClass, response, type, link);
                 // Displays the message success at the top of the page.

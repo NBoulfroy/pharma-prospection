@@ -7,6 +7,9 @@ abstract class Power implements IControl
     /** @var int $id */
     protected $id;
 
+    /** @var string $designation */
+    protected $designation;
+
     /** @var float $cost */
     protected $cost;
 

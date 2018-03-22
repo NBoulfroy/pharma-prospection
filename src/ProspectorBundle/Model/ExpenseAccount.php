@@ -4,7 +4,7 @@ namespace ProspectorBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 
-abstract class ExpenseAccount implements IControl
+abstract class ExpenseAccount implements IControl, IManipulation
 {
     /**
      * @var int $id
@@ -193,10 +193,24 @@ abstract class ExpenseAccount implements IControl
      */
     public static function control($param, $case = null)
     {
-        if(!preg_match('/^[0-9]+(\.[0-9][0-9]?)?$/', $param)) {
+        if(!preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param)) {
             return false;
         } else {
             return true;
         }
+    }
+
+    /**
+     * Calculates the basic total amount (no other expense account).
+     *
+     * @param float|int $nightPrice
+     * @param float|int $middayMealPrice
+     * @param float|int $mileagePrice
+     * @return float|int
+     */
+    public function amount($nightPrice, $middayMealPrice, $mileagePrice)
+    {
+        $amount = ($this->night * $nightPrice) + ($this->middayMeal * $middayMealPrice) + ($this->mileage * $mileagePrice);
+        return $amount;
     }
 }
