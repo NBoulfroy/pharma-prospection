@@ -5,7 +5,8 @@
  * @File    : web/assets/js/Form.js
  * @Version : 1.2
  * @Author  : BOULFROY Nicolas
- * @Create  : 2018/03/21
+ * @Create  : 2018/03/15
+ * @Update  : 2018/03/22
  */
 
 /**
@@ -54,7 +55,7 @@ Ajax.prototype._createRequest = function() {
 /**
  * Manages displaying if the AJAX request has been a success status.
  *
- * @param {ActiveX.IXMLDOMElement} div - where the message must be added in HTML page
+ * @param {HTMLDivElement} div - where the message must be added in HTML page
  * @private
  */
 Ajax.prototype._displayMessageSuccess = function(div) {
@@ -78,7 +79,7 @@ Ajax.prototype._displayMessageSuccess = function(div) {
 /**
  * Manages displaying if the AJAX request has been an error status.
  *
- * @param {ActiveX.IXMLDOMElement} div - where the message must be added in HTML page
+ * @param {HTMLDivElement} div - where the message must be added in HTML page
  * @private
  */
 Ajax.prototype._displayMessageError = function(div) {
@@ -158,7 +159,6 @@ Ajax.prototype._displayTable = function(dataClass, response, max) {
  */
 Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
     let td = document.createElement('tr');
-    let element;
 
     for (let i = 0; i < max; i++) {
         let element = document.createElement('td');
@@ -250,7 +250,7 @@ Ajax.prototype._query = function() {
         if (request.status == 200) {
             let response = JSON.parse(request.responseText);
 
-            if (response['status'] != 'success') {
+            if (response.status != 'success') {
                 // Displays wrong data.
                 Ajax.prototype._displayWrongData(form);
             } else {
