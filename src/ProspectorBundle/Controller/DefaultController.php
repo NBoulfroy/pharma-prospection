@@ -35,14 +35,11 @@ class DefaultController extends Controller
             'person' => $this->getUser()->getId()
         ));
 
-        // Gets dates if user would create new expense account.
-        $today = date('F');
-        $endDateEntry = new DateTime($today);
-        $endDateEntry->add(new DateInterval('P30D'));
-        $dates = array(
-            'today' => $today,
-            'month' => $endDateEntry->format('F')
-        );
+        // Gets today.
+        $today = date('y-m-d');
+        // Gets - 30 days before today.
+        $before = new DateTime($today);
+        $before->sub(new DateInterval('P30D'));
 
         // Creates an expense account.
         $expenseAccount = new ExpenseAccount();
@@ -62,7 +59,7 @@ class DefaultController extends Controller
             if ($verification != 0) {
                 $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
             } else {
-                $json = $this->newExpenseAccount($night, $middayMeal, $mileage, $endDateEntry, $expenseAccount);
+                $json = $this->newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount);
             }
 
             // Returns JSON.
@@ -70,8 +67,9 @@ class DefaultController extends Controller
         }
 
         return $this->render('prospector/expenses.html.twig', array(
+            'before' => $before,
+            'today' => $today,
             'expensesAccount' => $expensesAccount,
-            'dates' => $dates,
             'form' => $form->createView()
         ));
     }
@@ -98,6 +96,34 @@ class DefaultController extends Controller
     }
 
     /**
+     * Database query which returns the value from database.
+     *
+     * @param string $price
+     * @return float
+     */
+    private function getPrice($price)
+    {
+        switch ($price) {
+            case 'night':
+                return floatval(
+                    $this->getDoctrine()->getRepository(Parameter::class)->getPrice('night')[0]['value']
+                );
+                break;
+            case 'middayMeal':
+                return floatval(
+                    $this->getDoctrine()->getRepository(Parameter::class)->getPrice('middayMeal')[0]['value']
+                );
+                break;
+            case 'mileage':
+                return floatval(
+                    $this->getDoctrine()->getRepository(Power::class)
+                        ->getPowerCost($this->getUser()->getId())[0]['cost']
+                );
+                break;
+        }
+    }
+
+    /**
      * AJAX treatment which returns a vie with the new expense account.
      *
      * @param int $night - number of nights
@@ -109,23 +135,14 @@ class DefaultController extends Controller
      */
     private function newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount)
     {
-        $expenseAccount->setMonth(new Datetime(date('y-m-d')));
+        $expenseAccount->setDate(new Datetime(date('y-m-d')));
         $expenseAccount->setNight($night);
         $expenseAccount->setMiddayMeal($middayMeal);
         $expenseAccount->setMileage($mileage);
 
-        $nightPrice = floatval(
-            $this->getDoctrine()->getRepository(Parameter::class)
-                ->getPrice('night')[0]['value']
-        );
-        $middayMealPrice = floatval(
-            $this->getDoctrine()->getRepository(Parameter::class)
-                ->getPrice('middayMeal')[0]['value']
-        );
-        $mileagePrice = floatval(
-            $this->getDoctrine()->getRepository(Power::class)
-                ->getPowerCost($this->getUser()->getId())[0]['cost']
-        );
+        $nightPrice = $this->getPrice('night');
+        $middayMealPrice = $this->getPrice('middayMeal');
+        $mileagePrice = $this->getPrice('mileage');
 
         $totalAmount = $expenseAccount->amount($nightPrice, $middayMealPrice, $mileagePrice);
 
@@ -139,7 +156,7 @@ class DefaultController extends Controller
         $response = array(
             'status' => 'success',
             'data' => array(
-                $expenseAccount->getMonth()->format('Y-m-d'),
+                $expenseAccount->getDate()->format('y-m-d'),
                 $expenseAccount->getNight(),
                 $expenseAccount->getMiddayMeal(),
                 $expenseAccount->getMileage(),

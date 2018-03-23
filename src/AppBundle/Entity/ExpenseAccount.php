@@ -20,11 +20,11 @@ class ExpenseAccount extends BaseExpenseAccount
     protected $id;
 
     /**
-     * @ORM\Column(name="month", type="datetime", nullable=false)
+     * @ORM\Column(name="date", type="datetime", nullable=false)
      * @Assert\NotBlank()
      * @Assert\Type(type="datetime")
      */
-    protected $month;
+    protected $date;
 
     /**
      * @ORM\Column(name="night", type="integer", nullable=true)

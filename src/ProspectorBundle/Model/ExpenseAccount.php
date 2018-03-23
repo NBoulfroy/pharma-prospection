@@ -16,9 +16,9 @@ abstract class ExpenseAccount implements IControl, IManipulation
     /**
      * @var \DateTime
      *
-     * Expense account month.
+     * Expense account date.
      */
-    protected $month;
+    protected $date;
 
     /**
      * @var int $night
@@ -75,17 +75,17 @@ abstract class ExpenseAccount implements IControl, IManipulation
     /**
      * @return \DateTime
      */
-    public function getMonth()
+    public function getDate()
     {
-        return $this->month;
+        return $this->date;
     }
 
     /**
-     * @param \DateTime $month
+     * @param \DateTime $date
      */
-    public function setMonth($month)
+    public function setDate($date)
     {
-        $this->month = $month;
+        $this->date = $date;
     }
 
     /**

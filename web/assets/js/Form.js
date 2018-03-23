@@ -49,6 +49,8 @@ Form.prototype._controlValue = function(type, value) {
             return /^[0-9]{1,}$/g.test(value);
         case 'decimal':
             return /^([0-9]{1,})+(\.[0-9]{1,}?)?$/g.test(value);
+        case 'date':
+            return true; //  /^$/.test(value)
     }
 };
 
