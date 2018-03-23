@@ -114,6 +114,7 @@ Ajax.prototype._displayMessage = function(type) {
 
     switch(type) {
         case 'success':
+            document.getElementsByClassName('emptyData')[0].innerHTML = '';
             Ajax.prototype._displayMessageSuccess(div);
             parent.appendChild(div);
             break;

@@ -211,6 +211,6 @@ abstract class ExpenseAccount implements IControl, IManipulation
     public function amount($nightPrice, $middayMealPrice, $mileagePrice)
     {
         $amount = ($this->night * $nightPrice) + ($this->middayMeal * $middayMealPrice) + ($this->mileage * $mileagePrice);
-        return $amount;
+        return number_format($amount, 2);
     }
 }
