@@ -36,10 +36,32 @@ function Form(modal = null, formClass, submitButton, buttons, url, dataClass, ty
 }
 
 /**
+ *
+ *
+ * @param {string} value
+ * @private
+ */
+Form.prototype._dateVerification = function(value) {
+    // Sets a Date object with the value.
+    let day = new Date(value);
+    // Defines a Date variable with the current date.
+    let today = new Date();
+    // Defines a Date variable with 30 days before the current day.
+    let begin = new Date();
+    begin.setDate(today.getDate() - 30);
+
+    if (day < begin || day > today ) {
+        return false;
+    } else {
+        return true;
+    }
+};
+
+/**
  * Controls value by a type passed in parameters.
  *
  * @param {string} type
- * @param {int|string} value
+ * @param {*} value
  * @returns {boolean}
  * @private
  */
@@ -50,7 +72,11 @@ Form.prototype._controlValue = function(type, value) {
         case 'decimal':
             return /^([0-9]{1,})+(\.[0-9]{1,}?)?$/g.test(value);
         case 'date':
-            return true; //  /^$/.test(value)
+            if (!/^[^A-Za-z <>]{10}$/g.test(value)) {
+                return false;
+            } else {
+                return this._dateVerification(value);
+            }
     }
 };
 
@@ -69,11 +95,12 @@ Form.prototype._displayWrongColor = function(form) {
 /**
  * Controls the input.
  *
+ * @param {string} type
+ * @param {*} value
  * @returns {boolean}
  * @private
  */
 Form.prototype._controlInput = function(type, value) {
-    // Controls the value.
     if (!this._controlValue(type, value)) {
         // Disables the button.
         document.getElementById('save').setAttribute('disabled', 'disabled');
@@ -94,13 +121,12 @@ Form.prototype._controlForm = function() {
     let form = this.form;
     let inputs = form.getElementsByTagName('input');
 
+    // (inputs[i].value != '') ? inputs[i].value : 0
+
+    let array = [];
+
     for (let i = 0; i < inputs.length - 1; i++) {
-        if (!Form.prototype._controlInput(
-                // Returns the value of 'data-type' attribute from the input.
-                inputs[i].getAttribute('data-type'),
-                // If value is '', return 0, else return the value contains in the input.
-                (inputs[i].value != '') ? inputs[i].value : 0
-            )) {
+        if (!Form.prototype._controlInput(inputs[i].getAttribute('data-type'), (inputs[i].value != '') ? inputs[i].value : 0 )) {
             Form.prototype._displayWrongColor(form);
             break;
         }
