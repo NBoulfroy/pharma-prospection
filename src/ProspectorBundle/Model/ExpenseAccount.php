@@ -3,6 +3,7 @@
 namespace ProspectorBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
+use \DateTime;
 
 abstract class ExpenseAccount implements IControl, IManipulation
 {
@@ -188,12 +189,35 @@ abstract class ExpenseAccount implements IControl, IManipulation
      * Controls variable.
      *
      * @param string $param - string variable which contains data
-     * @param null $case - empty this time
      * @return bool
      */
-    public static function control($param, $case = null)
+    public static function control($param)
     {
-        if(!preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param)) {
+        // decimal: preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param)
+        // date : preg_match('/^[0-9]{1,4}\-[0-9]{2}\-[0-9]{1,4}$/', $param)
+
+        $verification = preg_match('/^[0-9]{1,4}\-[0-9]{2}\-[0-9]{1,4}$/', $param);
+
+        if (!$verification) {
+            return preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param);
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Controls if the date is between two days
+     *
+     * @param DateTime $today - the current day
+     * @param DateTime $begin - the current day less than thirty days
+     * @param string $value - the day which is verified between today and begin day
+     * @return bool
+     */
+    public static function controlDate($today, $begin, $value)
+    {
+        $date = new Datetime($value);
+
+        if ($date < $begin || $date > $today) {
             return false;
         } else {
             return true;

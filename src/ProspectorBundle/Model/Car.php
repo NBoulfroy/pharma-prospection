@@ -68,19 +68,8 @@ abstract class Car implements IControl
      * @param null|string $case - Country abbreviation
      * @return bool
      */
-    public static function control($param, $case = null)
+    public static function control($param)
     {
-        switch ($case) {
-            case 'us':
-                break;
-            case 'en':
-                break;
-            case 'gb':
-                break;
-            case 'be':
-                break;
-        }
-
         return false;
     }
 }

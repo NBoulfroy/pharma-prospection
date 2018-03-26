@@ -68,7 +68,7 @@
                                 <label for="expense_account_date" class="required">Date: </label>
                                 <input class="form-control" id="expense_account_date"
                                        name="expense_account[date]" type="date"
-                                       min="{{ before|date('Y-m-d') }}" max ="{{ today|date('Y-m-d') }}"
+                                       min="{{ begin|date('Y-m-d') }}" max ="{{ today|date('Y-m-d') }}"
                                        data-type="date" />
                             </div>
                         </div>

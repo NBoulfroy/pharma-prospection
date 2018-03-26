@@ -36,10 +36,10 @@ class DefaultController extends Controller
         ));
 
         // Gets today.
-        $today = date('y-m-d');
+        $today = new DateTime();
         // Gets - 30 days before today.
-        $before = new DateTime($today);
-        $before->sub(new DateInterval('P30D'));
+        $begin = new DateTime();
+        $begin->sub(new DateInterval('P30D'));
 
         // Creates an expense account.
         $expenseAccount = new ExpenseAccount();
@@ -48,18 +48,29 @@ class DefaultController extends Controller
 
         // If an AJAX request is send.
         if ($request->isXmlHttpRequest()) {
+            // Gets all date from input's name.
+            $date = $request->get('expense_account')['date'];
             $night = $request->get('expense_account')['night'];
             $middayMeal = $request->get('expense_account')['middayMeal'];
             $mileage = $request->get('expense_account')['mileage'];
 
             // Controls the variables content.
-            $verification = $this->verification(array($night, $middayMeal, $mileage));
+            $verification = $this->dataVerification(array($date, $night, $middayMeal, $mileage));
 
-            // If verification returns false, processing to add new expense account is canceled.
             if ($verification != 0) {
+                // One of the data sends by AJAX request is invalid.
                 $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
             } else {
-                $json = $this->newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount);
+                // Control if the date sends by AJAX request is correct.
+                $dateVerification = $expenseAccount::controlDate($today, $begin, $date);
+
+                if (!$dateVerification) {
+                    // The date is invalid.
+                    $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
+                } else {
+                    // The date is valid.
+                    $json = $this->newExpenseAccount($night, $middayMeal, $mileage, $date, $expenseAccount);
+                }
             }
 
             // Returns JSON.
@@ -67,7 +78,7 @@ class DefaultController extends Controller
         }
 
         return $this->render('prospector/expenses.html.twig', array(
-            'before' => $before,
+            'begin' => $begin,
             'today' => $today,
             'expensesAccount' => $expensesAccount,
             'form' => $form->createView()
@@ -80,7 +91,7 @@ class DefaultController extends Controller
      * @param array $array
      * @return int
      */
-    private function verification($array)
+    private function dataVerification($array)
     {
         $error = 0;
 
@@ -129,13 +140,13 @@ class DefaultController extends Controller
      * @param int $night - number of nights
      * @param int $middayMeal - number of midday meals
      * @param float $mileage - number of mileages
-     * @param \Datetime $today - date when the new expense account has been stored in database.
+     * @param string $date - date when the new expense account has been stored in database.
      * @param ExpenseAccount $expenseAccount - ExpenseAccount entity object
      * @return array
      */
-    private function newExpenseAccount($night, $middayMeal, $mileage, $today, $expenseAccount)
+    private function newExpenseAccount($night, $middayMeal, $mileage, $date, $expenseAccount)
     {
-        $expenseAccount->setDate(new Datetime(date('y-m-d')));
+        $expenseAccount->setDate(new DateTime($date));
         $expenseAccount->setNight($night);
         $expenseAccount->setMiddayMeal($middayMeal);
         $expenseAccount->setMileage($mileage);
@@ -156,7 +167,7 @@ class DefaultController extends Controller
         $response = array(
             'status' => 'success',
             'data' => array(
-                $expenseAccount->getDate()->format('y-m-d'),
+                $expenseAccount->getDate()->format('Y-m-d'),
                 $expenseAccount->getNight(),
                 $expenseAccount->getMiddayMeal(),
                 $expenseAccount->getMileage(),
