@@ -14,7 +14,7 @@
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
             <a class="navbar-brand" href="{{ path('homepage') }}">Pharma-Prospection</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             {% if app.user %}
@@ -22,7 +22,7 @@
                     <ul class="navbar-nav ml-auto">
                         {% block navbar %}{% endblock %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="{{ path('profile') }}">
                                 <span class="fa fa-user" aria-hidden="true"></span> Profile
                             </a>
                         </li>

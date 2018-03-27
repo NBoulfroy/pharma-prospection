@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Your profile{% endblock %}
+
+{% block elements %}
+    <form class="mt-4">
+        <div class="card ">
+            <div class="card-header">
+                <h3 class="card-title text-center">Your profile</h3>
+            </div>
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="userName">ID number:</label>
+                            <input class="form-control" id="userName" value="{{ data.0.person.username|upper }}" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="lastName">Last name:</label>
+                            <input class="form-control" id="lastName" value="{{ data.0.lastName|upper }}" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="firstName">First name:</label>
+                            <input class="form-control" id="firstName" value="{{ data.0.firstName }}" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="email">E-mail:</label>
+                            <input class="form-control" id="email" value="{{ data.0.person.email }}" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="mobilePhoneNumber">Mobile phone number:</label>
+                            <input class="form-control" id="mobilePhoneNumber" value="{{ data.0.mobilePhoneNumber }}" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone number:</label>
+                            <input class="form-control" id="phoneNumber" value="{{ data.0.phoneNumber }}" disabled="disabled" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}
