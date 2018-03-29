@@ -1,0 +1,143 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - Expense account n°{{ id }}{% endblock %}
+
+{% block navbar %}
+    <li class="nav-item">
+        <a href="" role="link" class="nav-link" id="add" data-toggle="modal" data-target="#newOtherExpenseAccount">
+            <span class="fa fa-plus"></span> New other expense account
+        </a>
+    </li>
+{% endblock %}
+
+{% block elements %}
+    {# TODO : UPDATE THIS PART IF I HAVE A BETTER SOLUTION #}
+    {%  set totalNights = expenseAccount.0.night * nightPrice %}
+    {% set totalMiddayMeals = expenseAccount.0.middayMeal * middayMealPrice %}
+    {% set totalMileages = expenseAccount.0.mileage * mileagePrice %}
+
+    <div class="mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('homepage') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ path('prospector_expenses_account') }}">Expenses account</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Expense account n°{{ id }}</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="col-12">
+        <div class="mt-4">
+            <div class="message"></div>
+            <div class="">
+                <h3 class="text-center">Expense account</h3>
+            </div>
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Flat fee</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit amount</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Night(s)</td>
+                        <td>{{ expenseAccount.0.night }}</td>
+                        <td>{{ nightPrice }}</td>
+                        <td>{{ totalNights }}</td>
+                    </tr>
+                    <tr>
+                        <td>Midday meal(s)</td>
+                        <td>{{ expenseAccount.0.middayMeal }}</td>
+                        <td>{{ middayMealPrice }}</td>
+                        <td>{{ totalMiddayMeals }}</td>
+                    </tr>
+                    <tr>
+                        <td>Mileages</td>
+                        <td>{{ expenseAccount.0.mileage }}</td>
+                        <td>{{ mileagePrice }}</td>
+                        <td>{{ totalMileages }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br />
+            <div class="">
+                <h3 class="text-center">Other expenses account</h3>
+            </div>
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody class="data">
+                    {#<td></td>#}
+                    {#<td></td>#}
+                    {#<td></td>#}
+                    {#<td><a href="" class="btn btn-primary">Delete</a></td>#}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {# Modal to add new other expense account for the current expense account in the database. #}
+    <div class="modal fade" id="newOtherExpenseAccount">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                {# Modal Header #}
+                <div class="modal-header">
+                    <h4 class="modal-title">New other expense account</h4>
+                    <button type="button" class="close" id="cross" data-dismiss="modal">&times;</button>
+                </div>
+                {# Modal body #}
+                <div class="modal-body">
+                    {{ form_start(form, { 'attr' : { 'class': 'newOtherExpenseAccount' } }) }}
+                    <div class="row">
+                        <div class="col-3">
+                            <div class="form-group" id="dateGroup">
+                                <label for="expense_account_date">Date: </label>
+                                <input class="form-control" id="expense_account_date"
+                                       name="expense_account[date]" type="date"
+                                        {#min="{{ begin|date('Y-m-d') }}" max ="{{ today|date('Y-m-d') }}"#}
+                                       data-type="date" required />
+                            </div>
+                        </div>
+                        <div class="col-9">
+                            <div class="form-group" id="designationGroup">
+                                {{ form_row(form.designation, {'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': 'iohgihgirhgih',
+                                    'data-type': 'string'
+                                }}) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group" id="fileGroup">
+                                {{ form_row(form.file, {'attr': {
+                                    'class': 'form-control',
+                                    'data-type': 'img'
+                                }}) }}
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+                {# Modal footer #}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="save">Save</button>
+                    <button type="button" class="btn btn-secondary" id="close" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

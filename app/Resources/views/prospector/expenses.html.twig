@@ -12,6 +12,17 @@
 
 {% block elements %}
     <div class="mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('homepage') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Expenses account</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="mt-4">
         <div class="col-12">
             {# Display a message if the user doesn't have expenses account. #}
             <div class="emptyData">
@@ -26,7 +37,6 @@
             <table class="table table-hover text-center">
                 <thead>
                 <tr>
-                    {#<th scope="col">Submit</th>#}
                     <th scope="col">Date</th>
                     <th scope="col">Night(s)</th>
                     <th scope="col">Midday meal(s)</th>
@@ -101,7 +111,6 @@
                         </div>
                     </div>
                     {{ form_end(form) }}
-                    <div id="wrongData"></div>
                 </div>
                 {# Modal footer #}
                 <div class="modal-footer">

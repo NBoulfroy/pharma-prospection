@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\ExpenseAccount;
 use ProspectorBundle\Form\ExpenseAccountType;
+use AppBundle\Entity\OtherExpenseAccount;
+use ProspectorBundle\Form\OtherExpenseAccountType;
 use AppBundle\Entity\Parameter;
 use AppBundle\Entity\Power;
 use Doctrine\ORM\EntityManagerInterface;
@@ -184,7 +186,27 @@ class DefaultController extends Controller
      */
     public function expenseDetailAction($id, Request $request)
     {
-        return $this->render('prospector/expenseDetail.html.twig');
+        $expenseAccount = $this->getDoctrine()->getRepository(ExpenseAccount::class)->findBy(array(
+            'id' => $id,
+            'person' => $this->getUser()
+        ));
+
+        if (empty($expenseAccount) || $expenseAccount == null) {
+            return $this->redirectToRoute('prospector_expenses_account');
+        }
+
+        $otherExpenseAccount = new OtherExpenseAccount();
+
+        $form = $this->createForm(OtherExpenseAccountType::class, $otherExpenseAccount);
+
+        return $this->render('prospector/expenseDetail.html.twig', array(
+            'id' => $id,
+            'expenseAccount' => $expenseAccount,
+            'nightPrice' => $this->getPrice('night'),
+            'middayMealPrice' => $this->getPrice('middayMeal'),
+            'mileagePrice' => $this->getPrice('mileage'),
+            'form' => $form->createView()
+        ));
     }
 
     /**
