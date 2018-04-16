@@ -103,10 +103,10 @@
                     <div class="row">
                         <div class="col-3">
                             <div class="form-group" id="dateGroup">
-                                <label for="expense_account_date">Date: </label>
-                                <input class="form-control" id="expense_account_date"
-                                       name="expense_account[date]" type="date"
-                                        {#min="{{ begin|date('Y-m-d') }}" max ="{{ today|date('Y-m-d') }}"#}
+                                <label for="other_expense_account_date">Date: </label>
+                                <input class="form-control" id="other_expense_account_date"
+                                       name="other_expense_account[date]" type="date"
+                                       min="{{ begin|date('Y-m-d') }}" max ="{{ end|date('Y-m-d') }}"
                                        data-type="date" required />
                             </div>
                         </div>
@@ -114,7 +114,7 @@
                             <div class="form-group" id="designationGroup">
                                 {{ form_row(form.designation, {'attr': {
                                     'class': 'form-control',
-                                    'placeholder': 'iohgihgirhgih',
+                                    'placeholder': 'Restaurant with the client',
                                     'data-type': 'string'
                                 }}) }}
                             </div>
@@ -140,4 +140,21 @@
             </div>
         </div>
     </div>
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('assets/js/Form.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('assets/js/Ajax.js') }}"></script>
+    <script>
+        window.onload = function() {
+            let instance = new Form(
+                'newOtherExpenseAccount',
+                'newOtherExpenseAccount',
+                'save',
+                ['add', 'close', 'cross'],
+                '{{ path('prospector_expense_account_detail', { id: id }) }}',
+                'data',
+                'tableDelete',
+                ''
+            );
+        };
+    </script>
 {% endblock %}

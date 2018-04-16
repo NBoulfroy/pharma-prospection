@@ -249,7 +249,9 @@ Ajax.prototype._query = function() {
 
     request.onload = function() {
         if (request.status == 200) {
-            let response = JSON.parse(request.responseText);
+            // let response = JSON.parse(request.responseText);
+
+            console.log(request.responseText);
 
             if (response.status != 'success') {
                 // Displays wrong data.

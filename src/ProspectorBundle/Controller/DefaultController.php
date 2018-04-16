@@ -57,7 +57,7 @@ class DefaultController extends Controller
             $mileage = $request->get('expense_account')['mileage'];
 
             // Controls the variables content.
-            $verification = $this->dataVerification(array($date, $night, $middayMeal, $mileage));
+            $verification = $this->dataVerification('expenseAccount', array($date, $night, $middayMeal, $mileage));
 
             if ($verification != 0) {
                 // One of the data sends by AJAX request is invalid.
@@ -85,27 +85,6 @@ class DefaultController extends Controller
             'expensesAccount' => $expensesAccount,
             'form' => $form->createView()
         ));
-    }
-
-    /**
-     * Controls if the data contains in an array passed in parameter are correct.
-     *
-     * @param array $array
-     * @return int
-     */
-    private function dataVerification($array)
-    {
-        $error = 0;
-
-        foreach ($array as $item) {
-            $verification = ExpenseAccount::control($item);
-
-            if (!$verification) {
-                $error += 1;
-            }
-        }
-
-        return $error;
     }
 
     /**
@@ -195,9 +174,25 @@ class DefaultController extends Controller
             return $this->redirectToRoute('prospector_expenses_account');
         }
 
+        // Gets submission date of the current expense account.
+        $end = new DateTime($expenseAccount[0]->getDate()->format('Y-m-d'));
+        // Creates new date with the submission date.
+        $begin = new DateTime($expenseAccount[0]->getDate()->format('Y-m-d'));
+        // Subtracts 30 days.
+        $begin->sub(new DateInterval('P30D'));
+
         $otherExpenseAccount = new OtherExpenseAccount();
 
         $form = $this->createForm(OtherExpenseAccountType::class, $otherExpenseAccount);
+
+        // If an AJAX request is send.
+        if ($request->isXmlHttpRequest()) {
+            // Gets all date from input's name.
+            $date = $request->get('other_expense_account')['date'];
+            $designation = $request->get('other_expense_account')['designation'];
+            // Must passed by files property to get file when used AJAX request.
+            $file = $request->files->get('other_expense_account')['file'];
+        }
 
         return $this->render('prospector/expenseDetail.html.twig', array(
             'id' => $id,
@@ -205,6 +200,8 @@ class DefaultController extends Controller
             'nightPrice' => $this->getPrice('night'),
             'middayMealPrice' => $this->getPrice('middayMeal'),
             'mileagePrice' => $this->getPrice('mileage'),
+            'end' => $end,
+            'begin' => $begin,
             'form' => $form->createView()
         ));
     }
@@ -233,5 +230,43 @@ class DefaultController extends Controller
         }
 
         return $this->render('prospector/prospecting.html.twig');
+    }
+
+    /**
+     * Controls if the data contains in an array passed in parameter are correct.
+     *
+     * @param string $type
+     * @param array $array
+     * @return int
+     */
+    private function dataVerification($type, $array)
+    {
+        $error = 0;
+
+        switch($type) {
+            default:
+                $error = 1;
+                break;
+            case 'expenseAccount':
+                foreach ($array as $item) {
+                    $verification = ExpenseAccount::control($item);
+
+                    if (!$verification) {
+                        $error += 1;
+                    }
+                }
+                break;
+            case 'otherExpenseAccount':
+                foreach ($array as $item) {
+                    $verification = OtherExpenseAccount::control($item);
+
+                    if (!$verification) {
+                        $error += 1;
+                    }
+                }
+                break;
+        }
+
+        return $error;
     }
 }

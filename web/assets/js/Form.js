@@ -6,7 +6,7 @@
  * @Version : 1.3
  * @Author  : BOULFROY Nicolas
  * @Create  : 2018/03/15
- * @Update  : 2018/03/22
+ * @Update  : 2018/04/03
  */
 
 /**
@@ -67,6 +67,10 @@ Form.prototype._dateVerification = function(value) {
  */
 Form.prototype._controlValue = function(type, value) {
     switch(type) {
+        default:
+            return false;
+        case 'string':
+            return /^[a-z-A-Z0-9]{1,}$/g.test(value);
         case 'int':
             return /^[0-9]{1,}$/g.test(value);
         case 'decimal':
@@ -77,15 +81,33 @@ Form.prototype._controlValue = function(type, value) {
             } else {
                 return this._dateVerification(value);
             }
+        case 'img':
+            if (value === 'image/png' || value === 'image/jpeg') {
+                return true;
+            } else {
+                return false;
+            }
     }
 };
 
+/**
+ *
+ *
+ * @param form
+ * @private
+ */
 Form.prototype._resetColorInput = function(form) {
     for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
         form.getElementsByTagName('input')[i].style.borderColor = '#d3d3d3';
     }
 };
 
+/**
+ *
+ *
+ * @param form
+ * @private
+ */
 Form.prototype._displayWrongColor = function(form) {
     for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
         form.getElementsByTagName('input')[i].style.borderColor = 'red';
@@ -120,13 +142,18 @@ Form.prototype._controlInput = function(type, value) {
 Form.prototype._controlForm = function() {
     let form = this.form;
     let inputs = form.getElementsByTagName('input');
+    let value;
 
     // (inputs[i].value != '') ? inputs[i].value : 0
 
-    let array = [];
-
     for (let i = 0; i < inputs.length - 1; i++) {
-        if (!Form.prototype._controlInput(inputs[i].getAttribute('data-type'), (inputs[i].value != '') ? inputs[i].value : 0 )) {
+        if (inputs[i].getAttribute('data-type') === 'img') {
+            value = (inputs[i].value != '') ? inputs[i].files[0].type : '';
+        } else {
+            value = (inputs[i].value != '') ? inputs[i].value : 0;
+        }
+
+        if (!Form.prototype._controlInput(inputs[i].getAttribute('data-type'), value)) {
             Form.prototype._displayWrongColor(form);
             break;
         }
@@ -190,7 +217,11 @@ Form.prototype._events = function() {
         let data = new FormData();
 
         for (let l = 0; l < inputs.length; l++) {
-            data.append(inputs[l].getAttribute('name'), (inputs[l].value != '') ? inputs[l].value : 0);
+            if (inputs[l].getAttribute('data-type') === 'img') {
+                data.append(inputs[l].getAttribute('name'), inputs[l].files[0]);
+            } else {
+                data.append(inputs[l].getAttribute('name'), (inputs[l].value != '') ? inputs[l].value : 0);
+            }
         }
 
         // Creates an AJAX object and realizes the treatment (back-end and front-end).
