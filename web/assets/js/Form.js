@@ -70,7 +70,7 @@ Form.prototype._controlValue = function(type, value) {
         default:
             return false;
         case 'string':
-            return /^[a-z-A-Z0-9]{1,}$/g.test(value);
+            return /^[a-z-A-Z0-9 ,!?&éàçÉæ?\-ÇÈœŒÀÙè\'\"]{1,}$/g.test(value);
         case 'int':
             return /^[0-9]{1,}$/g.test(value);
         case 'decimal':
@@ -82,11 +82,7 @@ Form.prototype._controlValue = function(type, value) {
                 return this._dateVerification(value);
             }
         case 'img':
-            if (value === 'image/png' || value === 'image/jpeg') {
-                return true;
-            } else {
-                return false;
-            }
+            return (value === 'image/png' || value === 'image/jpeg') ? true : false;
     }
 };
 

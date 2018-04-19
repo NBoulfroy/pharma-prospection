@@ -2,7 +2,7 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class OtherExpenseAccount
+abstract class OtherExpenseAccount implements IControl
 {
     /**
      * @var int $id
@@ -136,5 +136,35 @@ abstract class OtherExpenseAccount
     public function setExpenseAccount($expenseAccount)
     {
         $this->expenseAccount = $expenseAccount;
+    }
+
+    /**
+     * Controls variable.
+     *
+     * @param string $param - string variable which contains data
+     * @return bool
+     */
+    public static function control($param)
+    {
+        // Date control
+        $verification = preg_match('/^[0-9]{1,4}\-[0-9]{2}\-[0-9]{1,4}$/', $param);
+
+        // String control
+        if (!$verification) {
+            $verification = preg_match('/^[a-zA-Z0-9]{1,}$/', $param);
+        }
+
+        // Int - Float - Decimal control
+        if (!$verification) {
+            $verification = is_numeric($param);
+        }
+
+        // File control
+        if (!$verification) {
+            // Type mime verification.
+            $verification = ($param === 'image/png' || $param === 'image/jpeg') ? true : false;
+        }
+
+        return $verification;
     }
 }

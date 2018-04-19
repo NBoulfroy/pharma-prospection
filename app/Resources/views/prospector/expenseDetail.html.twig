@@ -15,7 +15,6 @@
     {%  set totalNights = expenseAccount.0.night * nightPrice %}
     {% set totalMiddayMeals = expenseAccount.0.middayMeal * middayMealPrice %}
     {% set totalMileages = expenseAccount.0.mileage * mileagePrice %}
-
     <div class="mt-4">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -29,10 +28,37 @@
             </ol>
         </nav>
     </div>
-
     <div class="col-12">
         <div class="mt-4">
-            <div class="message"></div>
+            <div class="message">
+                {% if app.session.flashbag is not empty  %}
+                    <div class="mt-4">
+                        <div class="col-12">
+                            {% if app.session.flashBag.get('error') %}
+                                {% for message in app.session.flashBag.get('error') %}
+                                    <div class="alert alert-dismissible alert-danger text-center">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <span class="font-weight-bold">Error:</span> an error is occurred, please contact support if this happens again.
+                                    </div>
+                                {% endfor %}
+                            {% elseif app.session.flashBag.get('warning') %}
+                                {% for message in app.session.flashBag.get('warning') %}
+                                    <div class="alert alert-dismissible alert-warning text-center">
+                                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                        <span class="font-weight-bold">Warning:</span> you don't have the permission to manipulate this expense account.
+                                    </div>
+                                {% endfor %}
+                            {% elseif app.session.flashBag.get('success') %}
+                                <div class="alert alert-dismissible alert-success text-center">
+                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                    <span class="font-weight-bold">Success:</span> other expense account removed with success.
+                                </div>
+                            {% else %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
             <div class="">
                 <h3 class="text-center">Expense account</h3>
             </div>
@@ -74,16 +100,36 @@
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
-                        <th scope="col">Description</th>
+                        <th scope="col">Designation</th>
                         <th scope="col">Amount</th>
+                        <th scope="col">File</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody class="data">
-                    {#<td></td>#}
-                    {#<td></td>#}
-                    {#<td></td>#}
-                    {#<td><a href="" class="btn btn-primary">Delete</a></td>#}
+                    {% if otherExpensesAccount is not null or otherExpensesAccount is not empty  %}
+                        {% for otherExpenseAccount in otherExpensesAccount %}
+                            <tr>
+                                <td>{{ otherExpenseAccount.date|date('Y-m-d') }}</td>
+                                <td>{{ otherExpenseAccount.designation }}</td>
+                                <td>{{ otherExpenseAccount.amount }}</td>
+                                <td>
+                                    <a href="{{ asset('upload/otherExpenseAccount/' ~ otherExpenseAccount.file) }}"
+                                        target="_blank">voucher
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="{{
+                                        path('prospector_other_expense_account_delete', {
+                                            expenseAccountId: id ,
+                                            otherExpenseAccountId: otherExpenseAccount.id
+                                        }) }}"
+                                        class="btn btn-primary">Delete
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         </div>
@@ -121,11 +167,20 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-9">
                             <div class="form-group" id="fileGroup">
                                 {{ form_row(form.file, {'attr': {
                                     'class': 'form-control',
                                     'data-type': 'img'
+                                }}) }}
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-group" id="amountGroup">
+                                {{ form_row(form.amount, {'attr': {
+                                    'class': 'form-control',
+                                    'placeholder': '48',
+                                    'data-type': 'decimal'
                                 }}) }}
                             </div>
                         </div>
@@ -153,7 +208,7 @@
                 '{{ path('prospector_expense_account_detail', { id: id }) }}',
                 'data',
                 'tableDelete',
-                ''
+                '/otherExpenseAccount-delete'
             );
         };
     </script>

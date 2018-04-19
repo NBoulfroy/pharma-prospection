@@ -24,9 +24,9 @@ class OtherExpenseAccount extends BaseOtherExpenseAccount
     protected $date;
 
     /**
-     * @ORM\Column(name="description", type="string", nullable=false)
+     * @ORM\Column(name="designation", type="string", nullable=false)
      */
-    protected $description;
+    protected $designation;
 
     /**
      * @ORM\Column(name="amount", type="decimal", precision=10, scale=2, nullable=false)

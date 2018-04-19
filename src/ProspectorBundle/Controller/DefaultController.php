@@ -2,6 +2,7 @@
 
 namespace ProspectorBundle\Controller;
 
+use Doctrine\ORM\ORMException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -135,15 +136,16 @@ class DefaultController extends Controller
         $nightPrice = $this->getPrice('night');
         $middayMealPrice = $this->getPrice('middayMeal');
         $mileagePrice = $this->getPrice('mileage');
-
-        $totalAmount = $expenseAccount->amount($nightPrice, $middayMealPrice, $mileagePrice);
-
-        $expenseAccount->setTotalAmount($totalAmount);
+        $expenseAccount->setTotalAmount($expenseAccount->amount(array($nightPrice, $middayMealPrice, $mileagePrice)));
         $expenseAccount->setIsSubmit(false);
         $expenseAccount->setPerson($this->getUser());
 
-        $this->getDoctrine()->getManager()->persist($expenseAccount);
-        $this->getDoctrine()->getManager()->flush();
+        try {
+            $this->getDoctrine()->getManager()->persist($expenseAccount);
+            $this->getDoctrine()->getManager()->flush();
+        } catch (ORMException $e) {
+            return json_encode(array('status' => 'error', 'data' => $e->getMessage()));
+        }
 
         $response = array(
             'status' => 'success',
@@ -170,9 +172,14 @@ class DefaultController extends Controller
             'person' => $this->getUser()
         ));
 
+        // ExpenseAccount verification (if not exists, redirection to /expenses-account.
         if (empty($expenseAccount) || $expenseAccount == null) {
             return $this->redirectToRoute('prospector_expenses_account');
         }
+
+        $otherExpensesAccount = $this->getDoctrine()->getRepository(OtherExpenseAccount::class)->findBy(array(
+            'expenseAccount' => $expenseAccount[0]
+        ));
 
         // Gets submission date of the current expense account.
         $end = new DateTime($expenseAccount[0]->getDate()->format('Y-m-d'));
@@ -187,11 +194,35 @@ class DefaultController extends Controller
 
         // If an AJAX request is send.
         if ($request->isXmlHttpRequest()) {
-            // Gets all date from input's name.
+            // Get data from AJAX request.
             $date = $request->get('other_expense_account')['date'];
             $designation = $request->get('other_expense_account')['designation'];
-            // Must passed by files property to get file when used AJAX request.
             $file = $request->files->get('other_expense_account')['file'];
+            $amount = $request->get('other_expense_account')['amount'];
+
+            $verification = $this->dataVerification('otherExpenseAccount', array(
+                    $date, $designation, $file->getMimeType(), $amount)
+                );
+
+            if ($verification) {
+                // One of the data sends by AJAX request is invalid.
+                $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
+            } else {
+                // Control if the date sends by AJAX request is correct.
+                // TODO : UPGRADE THIS CODE BECAUSE I CALL A STATIC FUNCTION FROM AN OTHER CLASS (OTHER EXPENSE)
+                $dateVerification = ExpenseAccount::controlDate($end, $begin, $date);
+
+                // DateTime control.
+                if (!$dateVerification) {
+                    $json = json_encode(array('status' => 'error', 'data' => 'You have entered wrong data in the form.'));
+                } else {
+                    // The date is valid.
+                    $json = $this->newOtherExpenseAccount($date, $designation, $file, $amount, $otherExpenseAccount, $expenseAccount[0]);
+                }
+
+                // Returns JSON.
+                return new Response($json);
+            }
         }
 
         return $this->render('prospector/expenseDetail.html.twig', array(
@@ -202,8 +233,111 @@ class DefaultController extends Controller
             'mileagePrice' => $this->getPrice('mileage'),
             'end' => $end,
             'begin' => $begin,
+            'otherExpensesAccount' => $otherExpensesAccount,
+            'otherExpensesAccountDirectory' => $this->getParameter('upload_otherExpenseAccount_directory'),
             'form' => $form->createView()
         ));
+    }
+
+    /**
+     * @param \DateTime $date
+     * @param string $designation
+     * @param * $file
+     * @param int|float $amount
+     * @param OtherExpenseAccount $otherExpenseAccount
+     * @param ExpenseAccount $expenseAccount
+     * @return array
+     */
+    public function newOtherExpenseAccount($date, $designation, $file, $amount, $otherExpenseAccount, $expenseAccount) {
+        $otherExpenseAccount->setDate(new DateTime($date));
+        $otherExpenseAccount->setDesignation($designation);
+        $otherExpenseAccount->setAmount($amount);
+        $otherExpenseAccount->setExpenseAccount($expenseAccount);
+
+        // Rename file with unique name
+        $fileName = uniqid().".".$file->getClientOriginalExtension();
+        // Moves file to the upload directory
+        $file->move($this->getParameter('upload_otherExpenseAccount_directory'), $fileName);
+
+        $otherExpenseAccount->setFile($fileName);
+
+        try {
+            $this->getDoctrine()->getManager()->persist($otherExpenseAccount);
+            $this->getDoctrine()->getManager()->flush();
+
+            $response = array(
+                'status' => 'success',
+                'data' => array(
+                    $otherExpenseAccount->getDate()->format('Y-m-d'),
+                    $otherExpenseAccount->getDesignation(),
+                    floatval($otherExpenseAccount->getAmount()),
+                    '/upload/otherExpenseAccount/' . $otherExpenseAccount->getFile(),
+                    $expenseAccount->getId(),
+                    $otherExpenseAccount->getId()
+                )
+            );
+
+            return json_encode($response);
+        } catch (ORMException $e) {
+            $response = array(
+                'status' => 'error',
+                'data' => 'An error is occurred, please contact support if this happens again.'
+            );
+
+            return json_encode($response);
+        }
+    }
+
+    /**
+     * @Route("/otherExpenseAccount-delete/{expenseAccountId}/{otherExpenseAccountId}",
+     *     name="prospector_other_expense_account_delete",
+     *     requirements={
+     *         "expenseAccountId"= "\d+",
+     *         "otherExpenseAccountId"= "\d+"
+     *     })
+     */
+    public function deleteOtherExpense($expenseAccountId, $otherExpenseAccountId)
+    {
+        // TODO : USE SECURITY YML TO REDIRECT USER.
+        if ($this->getUser() == null || empty($this->getUser())) {
+            return $this->redirectToRoute('fos_user_security_login');
+        }
+
+        $doctrine = $this->getDoctrine();
+
+        $expenseAccount = $doctrine->getRepository(ExpenseAccount::class)->findBy(array(
+            'id' => $expenseAccountId,
+            'person' => $this->getUser()
+        ));
+        $otherExpenseAccount = $doctrine->getRepository(OtherExpenseAccount::class)->findBy(array(
+            'id' => $otherExpenseAccountId,
+            'expenseAccount' => $expenseAccount[0]
+        ));
+
+        if (empty($otherExpenseAccount) || is_null($otherExpenseAccount)) {
+            $this->get('session')->getFlashBag()->set('warning', 'You don\'t have the permission to manipulate this expense account.');
+
+            return $this->redirectToRoute('prospector_expense_account_detail', array(
+                'id' => $expenseAccountId
+            ));
+        }
+
+        try {
+            $doctrine->getManager()->remove($otherExpenseAccount[0]);
+            $doctrine->getManager()->flush();
+        } catch (ORMException $e) {
+            $this->get('session')->getFlashBag()->set('error', 'An error is occurred, please contact support if this happens again.');
+
+            return $this->redirectToRoute('prospector_expense_account_detail', array(
+                'id' => $expenseAccountId
+            ));
+        } finally {
+            $this->get('session')->getFlashBag()->set('success', 'Other expense account removed with success.');
+
+            return $this->redirectToRoute('prospector_expense_account_detail', array(
+                'id' => $expenseAccountId
+            ));
+        }
     }
 
     /**
@@ -217,19 +351,6 @@ class DefaultController extends Controller
         }
 
         return $this->render('prospector/stock.html.twig');
-    }
-
-    /**
-     * @Route("/prospecting", name="prospector_prospecting")
-     */
-    public function prospectingAction(Request $request)
-    {
-        // TODO : USE SECURITY YML TO REDIRECT USER.
-        if ($this->getUser() == null || empty($this->getUser())) {
-            return $this->redirectToRoute('fos_user_security_login');
-        }
-
-        return $this->render('prospector/prospecting.html.twig');
     }
 
     /**

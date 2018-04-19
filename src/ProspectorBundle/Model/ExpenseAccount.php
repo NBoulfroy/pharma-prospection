@@ -188,21 +188,20 @@ abstract class ExpenseAccount implements IControl, IManipulation
     /**
      * Controls variable.
      *
-     * @param string $param - string variable which contains data
+     * @param string|int|float $param - string variable which contains data
      * @return bool
      */
     public static function control($param)
     {
-        // decimal: preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param)
-        // date : preg_match('/^[0-9]{1,4}\-[0-9]{2}\-[0-9]{1,4}$/', $param)
-
+        // Datetime control
         $verification = preg_match('/^[0-9]{1,4}\-[0-9]{2}\-[0-9]{1,4}$/', $param);
 
+        // Int - Float - Decimal control
         if (!$verification) {
-            return preg_match('/^([0-9]{1,})+(\.[0-9]{1,}?)?$/', $param);
-        } else {
-            return true;
+            $verification = is_numeric($param);
         }
+
+        return $verification;
     }
 
     /**
@@ -227,14 +226,12 @@ abstract class ExpenseAccount implements IControl, IManipulation
     /**
      * Calculates the basic total amount (no other expense account).
      *
-     * @param float|int $nightPrice
-     * @param float|int $middayMealPrice
-     * @param float|int $mileagePrice
+     * @param array $array [nightPrice, middayMealPrice, mileagePrice]
      * @return float|int
      */
-    public function amount($nightPrice, $middayMealPrice, $mileagePrice)
+    public function amount($array)
     {
-        $amount = ($this->night * $nightPrice) + ($this->middayMeal * $middayMealPrice) + ($this->mileage * $mileagePrice);
+        $amount = ($this->night * $array[0]) + ($this->middayMeal * $array[1]) + ($this->mileage * $array[2]);
         return number_format($amount, 2);
     }
 }

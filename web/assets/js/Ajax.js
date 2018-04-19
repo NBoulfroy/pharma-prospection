@@ -3,10 +3,10 @@
  *
  * @Project : Pharma-Prospection
  * @File    : web/assets/js/Form.js
- * @Version : 1.2
+ * @Version : 1.3
  * @Author  : BOULFROY Nicolas
  * @Create  : 2018/03/15
- * @Update  : 2018/03/22
+ * @Update  : 2018/04/19
  */
 
 /**
@@ -114,7 +114,7 @@ Ajax.prototype._displayMessage = function(type) {
 
     switch(type) {
         case 'success':
-            document.getElementsByClassName('emptyData')[0].innerHTML = '';
+            (document.getElementsByClassName('emptyData')[0]) ? document.getElementsByClassName('emptyData')[0].innerHTML = '' : null;
             Ajax.prototype._displayMessageSuccess(div);
             parent.appendChild(div);
             break;
@@ -136,17 +136,17 @@ Ajax.prototype._displayMessage = function(type) {
  * @private
  */
 Ajax.prototype._displayTable = function(dataClass, response, max) {
-    let td = document.createElement('tr');
+    let tr = document.createElement('tr');
     let element;
 
     for (let i = 0; i < max; i++) {
         let element = document.createElement('td');
 
         element.innerHTML = response.data[i];
-        td.appendChild(element);
+        tr.appendChild(element);
     }
 
-    dataClass.appendChild(td);
+    dataClass.appendChild(tr);
 };
 
 /**
@@ -159,7 +159,7 @@ Ajax.prototype._displayTable = function(dataClass, response, max) {
  * @private
  */
 Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
-    let td = document.createElement('tr');
+    let tr = document.createElement('tr');
 
     for (let i = 0; i < max; i++) {
         let element = document.createElement('td');
@@ -173,14 +173,59 @@ Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
             link.setAttribute('class', 'btn btn-primary');
             link.innerHTML = 'Details';
             link.setAttribute('href', url);
-
             element.appendChild(link);
         }
 
-        td.appendChild(element);
+        tr.appendChild(element);
     }
 
-    dataClass.appendChild(td);
+    dataClass.appendChild(tr);
+};
+
+/**
+ *
+ *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - data from AJAX request
+ * @param {int} max - maximum of elements in json
+ * @param {string} href - for href <a></a> HTML element
+ * @private
+ */
+Ajax.prototype._displayTableDelete = function(dataClass, response, max, href) {
+    let tr = document.createElement('tr');
+
+    for (let i = 0; i < max; i++) {
+        let element = document.createElement('td');
+
+        if (i < (max - 2)) {
+            if (i < (max - 2) && /^\/[a-zA-Z0-9]{1,}\/[a-zA-Z0-9]{1,}\/[a-zA-Z0-9]{1,}\.(jpg|jpeg|png)$/g.test(response.data[i])) {
+                let link = document.createElement('a');
+                link.setAttribute('href', response.data[i]);
+                link.setAttribute('target', '_blank');
+                link.innerHTML = 'voucher';
+                element.appendChild(link);
+            } else {
+                element.innerHTML = response.data[i];
+            }
+        } else {
+            let link = document.createElement('a');
+            let url = href + '/' + response.data[i];
+
+            // Force incrementation of variable i to obtain the last attribute necessary for the route.
+            i++;
+            // Appends in url variable the next information (id)
+            url += '/' + response.data[i];
+
+            link.setAttribute('class', 'btn btn-primary');
+            link.innerHTML = 'Delete';
+            link.setAttribute('href', url);
+            element.appendChild(link);
+        }
+
+        tr.appendChild(element);
+    }
+
+    dataClass.appendChild(tr);
 };
 
 /**
@@ -202,6 +247,7 @@ Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
             Ajax.prototype._displayTableDetail(dataClass, response, max, link);
             break;
         case 'tableDelete':
+            Ajax.prototype._displayTableDelete(dataClass, response, max, link);
             break;
     }
 };
@@ -249,9 +295,7 @@ Ajax.prototype._query = function() {
 
     request.onload = function() {
         if (request.status == 200) {
-            // let response = JSON.parse(request.responseText);
-
-            console.log(request.responseText);
+            let response = JSON.parse(request.responseText);
 
             if (response.status != 'success') {
                 // Displays wrong data.
@@ -263,11 +307,12 @@ Ajax.prototype._query = function() {
                 Ajax.prototype._displayResponse(dataClass, response, type, link);
                 // Displays the message success at the top of the page.
                 Ajax.prototype._displayMessage('success');
-                // Closes modal.
-                jQuery('#' + modal).modal('toggle');
             }
         } else {
             Ajax.prototype._displayMessage('error');
         }
+
+        // Closes modal.
+        jQuery('#' + modal).modal('toggle');
     }
 };
