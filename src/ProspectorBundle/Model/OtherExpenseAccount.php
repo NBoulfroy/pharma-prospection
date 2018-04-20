@@ -151,7 +151,7 @@ abstract class OtherExpenseAccount implements IControl
 
         // String control
         if (!$verification) {
-            $verification = preg_match('/^[a-zA-Z0-9]{1,}$/', $param);
+            $verification = preg_match('/^[a-zA-Z0-9 ,!?&éàçÉæ?\üÜûÛ-ÇÈœŒëÄâ²êËöÖäÀÙè\'\"]{1,}$/', $param);
         }
 
         // Int - Float - Decimal control

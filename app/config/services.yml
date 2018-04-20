@@ -29,7 +29,9 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    # add more services, or override services that need manual wiring
-    # AppBundle\Service\ExampleService:
-    #     arguments:
-    #         $someArgument: 'some_value'
+    # ProspectorBundle Doctrine events.
+    prospector_bundle.event_listener.otherExpenseAccountListener:
+        class: ProspectorBundle\EventListener\OtherExpenseAccountListener
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.event_listener, event: postPersist }
