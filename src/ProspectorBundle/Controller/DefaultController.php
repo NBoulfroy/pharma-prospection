@@ -12,6 +12,7 @@ use AppBundle\Entity\ExpenseAccount;
 use ProspectorBundle\Form\ExpenseAccountType;
 use AppBundle\Entity\OtherExpenseAccount;
 use ProspectorBundle\Form\OtherExpenseAccountType;
+use ProspectorBundle\Form\ExpenseAccountSubmitType;
 use AppBundle\Entity\Parameter;
 use AppBundle\Entity\Power;
 use Doctrine\ORM\EntityManagerInterface;
@@ -138,6 +139,8 @@ class DefaultController extends Controller
         $mileagePrice = $this->getPrice('mileage');
         $expenseAccount->setTotalAmount($expenseAccount->amount(array($nightPrice, $middayMealPrice, $mileagePrice)));
         $expenseAccount->setIsSubmit(false);
+        $expenseAccount->setIsRepay(false);
+        $expenseAccount->setIsValidate(false);
         $expenseAccount->setPerson($this->getUser());
 
         try {
@@ -155,6 +158,7 @@ class DefaultController extends Controller
                 $expenseAccount->getMiddayMeal(),
                 $expenseAccount->getMileage(),
                 $expenseAccount->getTotalAmount(),
+                'waiting for processing',
                 $expenseAccount->getId(),
             ),
         );
@@ -190,7 +194,8 @@ class DefaultController extends Controller
 
         $otherExpenseAccount = new OtherExpenseAccount();
 
-        $form = $this->createForm(OtherExpenseAccountType::class, $otherExpenseAccount);
+        $formOtherExpense = $this->createForm(OtherExpenseAccountType::class, $otherExpenseAccount);
+        // $formSubmit = $this->createForm(ExpenseAccountSubmitType::class, $expenseAccount[0]);
 
         // If an AJAX request is send.
         if ($request->isXmlHttpRequest()) {
@@ -235,7 +240,8 @@ class DefaultController extends Controller
             'begin' => $begin,
             'otherExpensesAccount' => $otherExpensesAccount,
             'otherExpensesAccountDirectory' => $this->getParameter('upload_otherExpenseAccount_directory'),
-            'form' => $form->createView()
+            'formNewOtherExpense' => $formOtherExpense->createView(),
+            // 'formSubmit' => $formSubmit
         ));
     }
 

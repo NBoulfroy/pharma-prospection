@@ -62,6 +62,26 @@ class ExpenseAccount extends BaseExpenseAccount
     protected $isSubmit;
 
     /**
+     * @ORM\Column(name="remark", type="text", nullable=true)
+     * @Assert\Type(type="text")
+     */
+    protected $remark;
+
+    /**
+     * @ORM\Column(name="isValidate", type="boolean", options={"default": false}, nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="bool")
+     */
+    protected $isValidate;
+
+    /**
+     * @ORM\Column(name="isRepay", type="boolean", options={"default": false}, nullable=true)
+     * @Assert\NotBlank()
+     * @Assert\Type(type="bool")
+     */
+    protected $isRepay;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Person")
      * @ORM\JoinColumn(name="person_id", referencedColumnName="id")
      */

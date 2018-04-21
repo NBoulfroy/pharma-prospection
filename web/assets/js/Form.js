@@ -19,7 +19,7 @@
  * @param {string} url - address to which the AJAX request must go
  * @param {string} dataClass - where the data must be added
  * @param {null|string} type - what use case is used to implement data in HTML template
- * @param {null|string} link - the <a></a> href content attribute
+ * @param {null|string|array} link - the <a></a> href content attribute
  * @constructor
  */
 function Form(modal = null, formClass, submitButton, buttons, url, dataClass, type = null, link = null) {

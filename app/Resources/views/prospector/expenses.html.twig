@@ -21,14 +21,12 @@
             </ol>
         </nav>
     </div>
-
     <div class="mt-4">
         <div class="col-12">
             {# Display a message if the user doesn't have expenses account. #}
             <div class="emptyData">
                 {% if expensesAccount is null or expensesAccount is empty %}
                     <div class="alert alert-dismissible alert-warning text-center">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
                         <span class="font-weight-bold">Warning:</span> no expenses account save on your account.
                     </div>
                 {% endif %}
@@ -40,9 +38,10 @@
                     <th scope="col">Date</th>
                     <th scope="col">Night(s)</th>
                     <th scope="col">Midday meal(s)</th>
-                    <th scope="col">Mileages</th>
+                    <th scope="col">Kilometers</th>
                     <th scope="col">Total amount</th>
-                    <th scope="col"></th>{# Show (link with button class) #}
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
                 </tr>
                 </thead>
                 <tbody class="data">
@@ -52,8 +51,20 @@
                         <td>{{ expenseAccount.night }}</td>
                         <td>{{ expenseAccount.middayMeal }}</td>
                         <td>{{ expenseAccount.mileage }}</td>
-                        <td>{{ expenseAccount.totalAmount }}</td> {# <span class="fa fa-dollar"></span> #}
-                        <td><a href="{{ path('prospector_expense_account_detail', { id: expenseAccount.id }) }}" class="btn btn-primary">Details</a></td>
+                        <td>{{ expenseAccount.totalAmount }}</td>
+                        <td>
+                            {% if expenseAccount.isRepay == 1 and expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
+                                repaying in progress
+                            {% elseif expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
+                                being processing
+                            {% else %}
+                                waiting for processing
+                            {% endif %}
+                        </td>
+                        <td >
+                            <a href="{{ path('prospector_expense_account_detail', { id: expenseAccount.id }) }}" class="btn btn-primary">Details</a>
+                            <a href="/expense/account-print/" class="btn btn-primary">Print</a>
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -127,7 +138,6 @@
     <script type="text/javascript" src="{{ asset('assets/js/Ajax.js') }}"></script>
     <script>
         window.onload = function() {
-            {# {{ path('prospector_expense_account_detail') }} #}
             let instance = new Form(
                 'newExpenseAccount',
                 'newExpenseAccount',
@@ -135,8 +145,8 @@
                 ['add', 'close', 'cross'],
                 '{{ path('prospector_expenses_account') }}',
                 'data',
-                'tableDetail',
-                '/expense-account'
+                'tableDetailPrint',
+                ['/expense-account', '/expense-account-print']
             );
         };
     </script>

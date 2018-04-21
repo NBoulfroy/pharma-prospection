@@ -6,7 +6,7 @@
  * @Version : 1.3
  * @Author  : BOULFROY Nicolas
  * @Create  : 2018/03/15
- * @Update  : 2018/04/19
+ * @Update  : 2018/04/21
  */
 
 /**
@@ -50,6 +50,24 @@ Ajax.prototype._createRequest = function() {
             return new ActiveXObject('Microsoft.XMLHTTP');
         }
     }
+};
+
+Ajax.prototype._displayMessageOnProgress = function(div) {
+    div.setAttribute('class', 'alert alert-dismissible alert-warning text-center');
+
+    let button = document.createElement('button');
+    button.setAttribute('type', 'button');
+    button.setAttribute('class', 'close');
+    button.setAttribute('data-dismiss', 'alert');
+    button.innerHTML = '&times;';
+    div.appendChild(button);
+
+    let span = document.createElement('span');
+    span.setAttribute('class', 'font-weight-bold');
+    span.innerHTML = 'Success:';
+    div.appendChild(span);
+
+    div.insertAdjacentText('beforeend', ' your new expense account is being added.');
 };
 
 /**
@@ -113,11 +131,19 @@ Ajax.prototype._displayMessage = function(type) {
     let div = document.createElement('div');
 
     switch(type) {
+        // Displays success message at the top of web page.
         case 'success':
             (document.getElementsByClassName('emptyData')[0]) ? document.getElementsByClassName('emptyData')[0].innerHTML = '' : null;
             Ajax.prototype._displayMessageSuccess(div);
             parent.appendChild(div);
             break;
+        // Displays AJAX request processing is in progress at the top of web page.
+        case 'progress':
+            (document.getElementsByClassName('emptyData')[0]) ? document.getElementsByClassName('emptyData')[0].innerHTML = '' : null;
+            Ajax.prototype._displayMessageOnProgress(div);
+            parent.append(div);
+            break;
+        // Displays error message at the top of web page.
         case 'error':
             Ajax.prototype._displayMessageError(div);
             parent.appendChild(div);
@@ -128,7 +154,7 @@ Ajax.prototype._displayMessage = function(type) {
 };
 
 /**
- *
+ * Constructs a basic table.
  *
  * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
  * @param {JSON} response - data from AJAX request
@@ -150,7 +176,7 @@ Ajax.prototype._displayTable = function(dataClass, response, max) {
 };
 
 /**
- *
+ * Constructs a table with detail button.
  *
  * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
  * @param {JSON} response - data from AJAX request
@@ -170,9 +196,9 @@ Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
             let link = document.createElement('a');
             let url = href + '/' + response.data[i];
 
+            link.setAttribute('href', url);
             link.setAttribute('class', 'btn btn-primary');
             link.innerHTML = 'Details';
-            link.setAttribute('href', url);
             element.appendChild(link);
         }
 
@@ -183,7 +209,44 @@ Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
 };
 
 /**
+ * Constructs a table with detail and print buttons.
  *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - data from AJAX request
+ * @param {int} max - maximum of elements in json
+ * @param {array} href - for href <a></a> HTML element
+ * @private
+ */
+Ajax.prototype._displayTableDetailPrint = function(dataClass, response, max, href) {
+    let tr = document.createElement('tr');
+
+    for (let i = 0; i < max; i++) {
+        let element = document.createElement('td');
+
+        if (i < (max - 1)) {
+            element.innerHTML = response.data[i];
+        } else {
+            for (let j = 0; j < href.length; j++) {
+                let link = document.createElement('a');
+                let url = href[j] + '/' + response.data[i];
+
+                link.setAttribute('href', url);
+                link.setAttribute('class', 'btn btn-primary');
+                link.innerHTML = (j === 0) ? 'Details' : 'Print';
+                //
+                element.insertAdjacentText('beforeend', '\n');
+                element.appendChild(link);
+            }
+        }
+
+        tr.appendChild(element);
+    }
+
+    dataClass.appendChild(tr);
+};
+
+/**
+ * Constructs a table with a delete button.
  *
  * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
  * @param {JSON} response - data from AJAX request
@@ -211,14 +274,14 @@ Ajax.prototype._displayTableDelete = function(dataClass, response, max, href) {
             let link = document.createElement('a');
             let url = href + '/' + response.data[i];
 
-            // Force incrementation of variable i to obtain the last attribute necessary for the route.
+            // Forces incrementation of variable i to obtain the last attribute necessary for the route.
             i++;
             // Appends in url variable the next information (id)
             url += '/' + response.data[i];
 
+            link.setAttribute('href', url);
             link.setAttribute('class', 'btn btn-primary');
             link.innerHTML = 'Delete';
-            link.setAttribute('href', url);
             element.appendChild(link);
         }
 
@@ -234,7 +297,7 @@ Ajax.prototype._displayTableDelete = function(dataClass, response, max, href) {
  * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
  * @param {JSON} response - response returns by AJAX request
  * @param {string} type - type of HTML generation (simple table, table with detail button, table with delete button)
- * @param {null|string} link - for href <a></a> HTML element
+ * @param {null|string|array} link - for href <a></a> HTML element
  * @private
  */
 Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
@@ -242,9 +305,13 @@ Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
 
     switch (type) {
         default:
+            Ajax.prototype._displayTable(dataClass, response, max);
             break;
         case 'tableDetail':
             Ajax.prototype._displayTableDetail(dataClass, response, max, link);
+            break;
+        case 'tableDetailPrint':
+            Ajax.prototype._displayTableDetailPrint(dataClass, response, max, link);
             break;
         case 'tableDelete':
             Ajax.prototype._displayTableDelete(dataClass, response, max, link);

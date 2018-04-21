@@ -3,6 +3,16 @@
 {% block title %}{{ parent() }} - Your profile{% endblock %}
 
 {% block elements %}
+    <div class="mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('homepage') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Profile</li>
+            </ol>
+        </nav>
+    </div>
     <form class="mt-4">
         <div class="card ">
             <div class="card-header">

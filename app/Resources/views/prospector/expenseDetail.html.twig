@@ -3,11 +3,13 @@
 {% block title %}{{ parent() }} - Expense account n°{{ id }}{% endblock %}
 
 {% block navbar %}
-    <li class="nav-item">
-        <a href="" role="link" class="nav-link" id="add" data-toggle="modal" data-target="#newOtherExpenseAccount">
-            <span class="fa fa-plus"></span> New other expense account
-        </a>
-    </li>
+    {% if expenseAccount.0.isSubmit == 0 %}
+        <li class="nav-item">
+            <a href="" role="link" class="nav-link" id="add" data-toggle="modal" data-target="#newOtherExpenseAccount">
+                <span class="fa fa-plus"></span> New other expense account
+            </a>
+        </li>
+    {% endif %}
 {% endblock %}
 
 {% block elements %}
@@ -28,108 +30,149 @@
             </ol>
         </nav>
     </div>
-    <div class="col-12">
-        <div class="mt-4">
-            <div class="message">
-                {% if app.session.flashbag is not empty  %}
-                    <div class="mt-4">
-                        {% if app.session.flashBag.get('error') %}
-                            {% for message in app.session.flashBag.get('error') %}
-                                <div class="alert alert-dismissible alert-danger text-center">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <span class="font-weight-bold">Error:</span> an error is occurred, please contact support if this happens again.
-                                </div>
-                            {% endfor %}
-                        {% elseif app.session.flashBag.get('warning') %}
-                            {% for message in app.session.flashBag.get('warning') %}
-                                <div class="alert alert-dismissible alert-warning text-center">
-                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                    <span class="font-weight-bold">Warning:</span> you don't have the permission to manipulate this expense account.
-                                </div>
-                            {% endfor %}
-                        {% elseif app.session.flashBag.get('success') %}
-                            <div class="alert alert-dismissible alert-success text-center">
+    <div class="mt-4">
+        <div class="alert alert-dismissible alert-primary text-center">
+            {% if expenseAccount.0.isSubmit == 1 and expenseAccount.0.isValidate == 1 and expenseAccount.0.isRepay == 0%}
+                <span class="font-weight-bold">Information:</span> expense account in repayment and cannot be modifiable.
+            {% elseif expenseAccount.0.isSubmit == 1 and expenseAccount.0.isValidate == 1 %}
+                <span class="font-weight-bold">Information:</span> expense account validated and cannot be modifiable.
+            {% elseif expenseAccount.0.isSubmit == 1 %}
+                <span class="font-weight-bold">Information:</span> expense account submitted and cannot be modifiable.
+            {% else %}
+                <span class="font-weight-bold">Information:</span> expense account can be modifiable.
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="message">
+            {% if app.session.flashbag is not empty  %}
+                <div class="mt-4">
+                    {% if app.session.flashBag.get('error') %}
+                        {% for message in app.session.flashBag.get('error') %}
+                            <div class="alert alert-dismissible alert-danger text-center">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <span class="font-weight-bold">Success:</span> other expense account removed with success.
+                                <span class="font-weight-bold">Error:</span> an error is occurred, please contact support if this happens again.
                             </div>
-                        {% else %}
-                        {% endif %}
-                    </div>
-                {% endif %}
-            </div>
-            <div class="">
-                <h3 class="text-center">Expense account</h3>
-            </div>
-            <table class="table table-hover text-center">
-                <thead>
-                    <tr>
-                        <th scope="col">Flat fee</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Unit amount</th>
-                        <th scope="col">Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Night(s)</td>
-                        <td>{{ expenseAccount.0.night }}</td>
-                        <td>{{ nightPrice }}</td>
-                        <td>{{ totalNights }}</td>
-                    </tr>
-                    <tr>
-                        <td>Midday meal(s)</td>
-                        <td>{{ expenseAccount.0.middayMeal }}</td>
-                        <td>{{ middayMealPrice }}</td>
-                        <td>{{ totalMiddayMeals }}</td>
-                    </tr>
-                    <tr>
-                        <td>Mileages</td>
-                        <td>{{ expenseAccount.0.mileage }}</td>
-                        <td>{{ mileagePrice }}</td>
-                        <td>{{ totalMileages }}</td>
-                    </tr>
-                </tbody>
-            </table>
-            <br />
-            <div class="">
-                <h3 class="text-center">Other expenses account</h3>
-            </div>
-            <table class="table table-hover text-center">
-                <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Designation</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">File</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody class="data">
-                    {% if otherExpensesAccount is not null or otherExpensesAccount is not empty  %}
-                        {% for otherExpenseAccount in otherExpensesAccount %}
-                            <tr>
-                                <td>{{ otherExpenseAccount.date|date('Y-m-d') }}</td>
-                                <td>{{ otherExpenseAccount.designation }}</td>
-                                <td>{{ otherExpenseAccount.amount }}</td>
-                                <td>
-                                    <a href="{{ asset('upload/otherExpenseAccount/' ~ otherExpenseAccount.file) }}"
-                                        target="_blank">voucher
-                                    </a>
-                                </td>
-                                <td>
-                                    <a href="{{
-                                        path('prospector_other_expense_account_delete', {
-                                            expenseAccountId: id ,
-                                            otherExpenseAccountId: otherExpenseAccount.id
-                                        }) }}"
-                                        class="btn btn-primary">Delete
-                                    </a>
-                                </td>
-                            </tr>
                         {% endfor %}
+                    {% elseif app.session.flashBag.get('warning') %}
+                        {% for message in app.session.flashBag.get('warning') %}
+                            <div class="alert alert-dismissible alert-warning text-center">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <span class="font-weight-bold">Warning:</span> you don't have the permission to manipulate this expense account.
+                            </div>
+                        {% endfor %}
+                    {% elseif app.session.flashBag.get('success') %}
+                        <div class="alert alert-dismissible alert-success text-center">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <span class="font-weight-bold">Success:</span> other expense account removed with success.
+                        </div>
+                    {% else %}
                     {% endif %}
-                </tbody>
-            </table>
+                </div>
+            {% endif %}
+        </div>
+        <div class="">
+            <h3 class="text-center">Expense account</h3>
+        </div>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr>
+                <th scope="col">Flat fee</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit amount</th>
+                <th scope="col">Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Night(s)</td>
+                <td>{{ expenseAccount.0.night }}</td>
+                <td>{{ nightPrice }}</td>
+                <td>{{ totalNights }}</td>
+            </tr>
+            <tr>
+                <td>Midday meal(s)</td>
+                <td>{{ expenseAccount.0.middayMeal }}</td>
+                <td>{{ middayMealPrice }}</td>
+                <td>{{ totalMiddayMeals }}</td>
+            </tr>
+            <tr>
+                <td>Kilometers</td>
+                <td>{{ expenseAccount.0.mileage }}</td>
+                <td>{{ mileagePrice }}</td>
+                <td>{{ totalMileages }}</td>
+            </tr>
+            </tbody>
+        </table>
+        <br />
+        <div class="">
+            <h3 class="text-center">Other expenses account</h3>
+        </div>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Designation</th>
+                <th scope="col">Amount</th>
+                <th scope="col">File</th>
+                {% if expenseAccount.0.isSubmit != 1 %}
+                    <th scope="col"></th>
+                {% endif %}
+            </tr>
+            </thead>
+            <tbody class="data">
+            {% if otherExpensesAccount is not null or otherExpensesAccount is not empty  %}
+                {% for otherExpenseAccount in otherExpensesAccount %}
+                    <tr>
+                        <td>{{ otherExpenseAccount.date|date('Y-m-d') }}</td>
+                        <td>{{ otherExpenseAccount.designation }}</td>
+                        <td>{{ otherExpenseAccount.amount }}</td>
+                        <td>
+                            <a href="{{ asset('upload/otherExpenseAccount/' ~ otherExpenseAccount.file) }}"
+                               target="_blank">voucher
+                            </a>
+                        </td>
+                        {% if expenseAccount.0.isSubmit != 1
+                            or expenseAccount.0.isSubmit != 1 and expenseAccount.0.isValidate != 1
+                            or expenseAccount.0.isSubmit != 1 and expenseAccount.0.isValidate != 1
+                            and expenseAccount.0.isRepay != 1
+                        %}
+                            <td>
+                                <a href="{{
+                                path('prospector_other_expense_account_delete', {
+                                    expenseAccountId: id ,
+                                    otherExpenseAccountId: otherExpenseAccount.id
+                                }) }}"
+                                   class="btn btn-primary">Delete
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4">
+        <div class="form-group">
+            <label for="commentary">Remark(s):</label>
+            {% if expenseAccount.0.remark is null or expenseAccount.0.remark is empty %}
+                <textarea class="form-control" id="commentary" disabled="disabled" style="resize: none;">No remark.</textarea>
+            {% else %}
+                <textarea class="form-control" id="commentary" disabled="disabled" style="resize: none;">{{ expenseAccount.0.remark }}</textarea>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mt-4">
+        <div class="col-3">
+            <div class="form-group">
+                <label for="totalAmount">Total amount:</label>
+                <input class="form-control" id="totalAmount" disabled="disabled"
+                       value="{{ expenseAccount.0.totalAmount }}" />
+            </div>
+            <div class="col-3">
+
+            </div>
         </div>
     </div>
     {# Modal to add new other expense account for the current expense account in the database. #}
@@ -143,7 +186,7 @@
                 </div>
                 {# Modal body #}
                 <div class="modal-body">
-                    {{ form_start(form, { 'attr' : { 'class': 'newOtherExpenseAccount' } }) }}
+                    {{ form_start(formNewOtherExpense, { 'attr' : { 'class': 'newOtherExpenseAccount' } }) }}
                     <div class="row">
                         <div class="col-3">
                             <div class="form-group" id="dateGroup">
@@ -156,7 +199,7 @@
                         </div>
                         <div class="col-9">
                             <div class="form-group" id="designationGroup">
-                                {{ form_row(form.designation, {'attr': {
+                                {{ form_row(formNewOtherExpense.designation, {'attr': {
                                     'class': 'form-control',
                                     'placeholder': 'Restaurant with the client',
                                     'data-type': 'string'
@@ -167,7 +210,7 @@
                     <div class="row">
                         <div class="col-9">
                             <div class="form-group" id="fileGroup">
-                                {{ form_row(form.file, {'attr': {
+                                {{ form_row(formNewOtherExpense.file, {'attr': {
                                     'class': 'form-control',
                                     'data-type': 'img'
                                 }}) }}
@@ -175,7 +218,7 @@
                         </div>
                         <div class="col-3">
                             <div class="form-group" id="amountGroup">
-                                {{ form_row(form.amount, {'attr': {
+                                {{ form_row(formNewOtherExpense.amount, {'attr': {
                                     'class': 'form-control',
                                     'placeholder': '48',
                                     'data-type': 'decimal'
@@ -183,7 +226,7 @@
                             </div>
                         </div>
                     </div>
-                    {{ form_end(form) }}
+                    {{ form_end(formNewOtherExpense) }}
                 </div>
                 {# Modal footer #}
                 <div class="modal-footer">

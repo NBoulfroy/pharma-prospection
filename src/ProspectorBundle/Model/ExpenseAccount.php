@@ -54,6 +54,15 @@ abstract class ExpenseAccount implements IControl, IManipulation
      */
     protected $isSubmit;
 
+    /** @var string */
+    protected $remark;
+
+    /** @var boolean $isValidate */
+    protected $isValidate;
+
+    /** @var boolean $isRepay */
+    protected $isRepay;
+
     /** @var Object $person */
     protected $person;
 
@@ -74,7 +83,7 @@ abstract class ExpenseAccount implements IControl, IManipulation
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
     public function getDate()
     {
@@ -82,7 +91,7 @@ abstract class ExpenseAccount implements IControl, IManipulation
     }
 
     /**
-     * @param \DateTime $date
+     * @param DateTime $date
      */
     public function setDate($date)
     {
@@ -167,6 +176,54 @@ abstract class ExpenseAccount implements IControl, IManipulation
     public function setIsSubmit($isSubmit)
     {
         $this->isSubmit = $isSubmit;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRemark()
+    {
+        return $this->remark;
+    }
+
+    /**
+     * @param string $remark
+     */
+    public function setRemark($remark)
+    {
+        $this->remark = $remark;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsValidate()
+    {
+        return $this->isValidate;
+    }
+
+    /**
+     * @param bool $isValidate
+     */
+    public function setIsValidate($isValidate)
+    {
+        $this->isValidate = $isValidate;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIsRepay()
+    {
+        return $this->isRepay;
+    }
+
+    /**
+     * @param bool $isRepay
+     */
+    public function setIsRepay($isRepay)
+    {
+        $this->isRepay = $isRepay;
     }
 
     /**
