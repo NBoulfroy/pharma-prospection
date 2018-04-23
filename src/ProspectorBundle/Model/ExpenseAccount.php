@@ -5,7 +5,7 @@ namespace ProspectorBundle\Model;
 use Doctrine\Common\Collections\Collection;
 use \DateTime;
 
-abstract class ExpenseAccount implements IControl, IManipulation
+abstract class ExpenseAccount extends Control implements IControl, IManipulation
 {
     /**
      * @var int $id
@@ -262,22 +262,24 @@ abstract class ExpenseAccount implements IControl, IManipulation
     }
 
     /**
-     * Controls if the date is between two days
      *
-     * @param DateTime $today - the current day
-     * @param DateTime $begin - the current day less than thirty days
-     * @param string $value - the day which is verified between today and begin day
-     * @return bool
+     *
+     * @param array $array
+     * @return int
      */
-    public static function controlDate($today, $begin, $value)
+    public static function verification($array)
     {
-        $date = new Datetime($value);
+        $error = 0;
 
-        if ($date < $begin || $date > $today) {
-            return false;
-        } else {
-            return true;
+        foreach ($array as $item) {
+            $verification = ExpenseAccount::control($item);
+
+            if (!$verification) {
+                $error += 1;
+            }
         }
+
+        return $error;
     }
 
     /**

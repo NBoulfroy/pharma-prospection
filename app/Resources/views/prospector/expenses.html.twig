@@ -22,54 +22,52 @@
         </nav>
     </div>
     <div class="mt-4">
-        <div class="col-12">
-            {# Display a message if the user doesn't have expenses account. #}
-            <div class="emptyData">
-                {% if expensesAccount is null or expensesAccount is empty %}
-                    <div class="alert alert-dismissible alert-warning text-center">
-                        <span class="font-weight-bold">Warning:</span> no expenses account save on your account.
-                    </div>
-                {% endif %}
-            </div>
-            <div class="message"></div>
-            <table class="table table-hover text-center">
-                <thead>
-                <tr>
-                    <th scope="col">Date</th>
-                    <th scope="col">Night(s)</th>
-                    <th scope="col">Midday meal(s)</th>
-                    <th scope="col">Kilometers</th>
-                    <th scope="col">Total amount</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Actions</th>
-                </tr>
-                </thead>
-                <tbody class="data">
-                {% for expenseAccount in expensesAccount %}
-                    <tr>
-                        <td>{{ expenseAccount.date|date('Y-m-d') }}</td>
-                        <td>{{ expenseAccount.night }}</td>
-                        <td>{{ expenseAccount.middayMeal }}</td>
-                        <td>{{ expenseAccount.mileage }}</td>
-                        <td>{{ expenseAccount.totalAmount }}</td>
-                        <td>
-                            {% if expenseAccount.isRepay == 1 and expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
-                                repaying in progress
-                            {% elseif expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
-                                being processing
-                            {% else %}
-                                waiting for processing
-                            {% endif %}
-                        </td>
-                        <td >
-                            <a href="{{ path('prospector_expense_account_detail', { id: expenseAccount.id }) }}" class="btn btn-primary">Details</a>
-                            <a href="/expense/account-print/" class="btn btn-primary">Print</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        {# Display a message if the user doesn't have expenses account. #}
+        <div class="emptyData">
+            {% if expensesAccount is null or expensesAccount is empty %}
+                <div class="alert alert-dismissible alert-warning text-center">
+                    <span class="font-weight-bold">Warning:</span> no expenses account save on your account.
+                </div>
+            {% endif %}
         </div>
+        <div class="message"></div>
+        <table class="table table-hover text-center">
+            <thead>
+            <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Night(s)</th>
+                <th scope="col">Midday meal(s)</th>
+                <th scope="col">Kilometers</th>
+                <th scope="col">Total amount</th>
+                <th scope="col">Status</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="data">
+            {% for expenseAccount in expensesAccount %}
+                <tr>
+                    <td>{{ expenseAccount.date|date('Y-m-d') }}</td>
+                    <td>{{ expenseAccount.night }}</td>
+                    <td>{{ expenseAccount.middayMeal }}</td>
+                    <td>{{ expenseAccount.mileage }}</td>
+                    <td>{{ expenseAccount.totalAmount }}</td>
+                    <td>
+                        {% if expenseAccount.isRepay == 1 and expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
+                            repaying in progress
+                        {% elseif expenseAccount.isValidate == 1 and expenseAccount.isSubmit == 1 %}
+                            being processing
+                        {% else %}
+                            waiting for processing
+                        {% endif %}
+                    </td>
+                    <td >
+                        <a href="{{ path('prospector_expense_account_detail', { id: expenseAccount.id }) }}" class="btn btn-primary">Details</a>
+                        <a href="/expense/account-print/" class="btn btn-primary">Print</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
     {# Modal to add new expense account in database. #}
     <div class="modal fade" id="newExpenseAccount">
@@ -143,7 +141,7 @@
                 'newExpenseAccount',
                 'save',
                 ['add', 'close', 'cross'],
-                '{{ path('prospector_expenses_account') }}',
+                '{{ path('prospector_expense_account_add') }}',
                 'data',
                 'tableDetailPrint',
                 ['/expense-account', '/expense-account-print']

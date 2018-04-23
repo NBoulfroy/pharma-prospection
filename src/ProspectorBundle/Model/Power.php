@@ -2,7 +2,7 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class Power implements IControl
+abstract class Power
 {
     /** @var int $id */
     protected $id;
@@ -43,21 +43,5 @@ abstract class Power implements IControl
     public function setCost($cost)
     {
         $this->cost = $cost;
-    }
-
-    /**
-     * Controls cost power.
-     *
-     * @param string $param - power cost
-     * @param null|string $case - not necessary this time
-     * @return bool
-     */
-    public static function control($param, $case = null)
-    {
-        if(!preg_match('', $param)) {
-            return false;
-        } else {
-            return true;
-        }
     }
 }

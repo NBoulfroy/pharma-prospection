@@ -2,7 +2,7 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class Profile implements IControl
+abstract class Profile
 {
     /** @var int $id */
     protected $id;
@@ -135,28 +135,5 @@ abstract class Profile implements IControl
     public function setCar($car)
     {
         $this->car = $car;
-    }
-
-    /**
-     * Controls variable.
-     *
-     * @param string $param
-     * @param null|string $case
-     * @return bool
-     */
-    public static function control($param, $case = null)
-    {
-        switch ($case) {
-            case 'lastName':
-                break;
-            case 'firstName':
-                break;
-            case 'mobilePhoneNumber':
-                break;
-            case 'phoneNumber':
-                break;
-        }
-
-        return false;
     }
 }

@@ -201,11 +201,13 @@ Form.prototype._events = function() {
     }
 
     // Sets for buttons an event passed in parameter in constructor (array)
-    for (let k = 0; k < buttons.length; k++) {
-        document.getElementById(buttons[k]).addEventListener('click', function() {
-            document.getElementsByClassName(formClass)[0].reset();
-            Form.prototype._resetColorInput(form);
-        });
+    if (buttons > 0) {
+        for (let k = 0; k < buttons.length; k++) {
+            document.getElementById(buttons[k]).addEventListener('click', function() {
+                document.getElementsByClassName(formClass)[0].reset();
+                Form.prototype._resetColorInput(form);
+            });
+        }
     }
 
     // Creates an event to manage AJAX request.

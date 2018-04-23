@@ -164,14 +164,20 @@
         </div>
     </div>
     <div class="mt-4">
-        <div class="col-3">
-            <div class="form-group">
-                <label for="totalAmount">Total amount:</label>
-                <input class="form-control" id="totalAmount" disabled="disabled"
-                       value="{{ expenseAccount.0.totalAmount }}" />
+        <div class="row">
+            <div class="col-3">
+                <div class="form-group">
+                    {#<label for="totalAmount">Total amount:</label>#}
+                    <input class="form-control" id="totalAmount" disabled="disabled"
+                           value="{{ expenseAccount.0.totalAmount }}" />
+                </div>
             </div>
             <div class="col-3">
-
+                {% if expenseAccount.0.isSubmit != 1 %}
+                    <a href="{{ path('prospector_other_expense_account_submit', {
+                        expenseAccountId: id })
+                    }}" class="btn btn-primary">Submit</a>
+                {% endif %}
             </div>
         </div>
     </div>

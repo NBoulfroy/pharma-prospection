@@ -29,7 +29,7 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    # ProspectorBundle Doctrine events.
+    # ProspectorBundle Doctrine events for otherExpenseAccountListener object.
     prospector_bundle.event_listener.otherExpenseAccountListener:
         class: ProspectorBundle\EventListener\OtherExpenseAccountListener
         tags:

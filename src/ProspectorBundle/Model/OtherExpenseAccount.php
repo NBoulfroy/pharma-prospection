@@ -2,7 +2,9 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class OtherExpenseAccount implements IControl
+use \DateTime;
+
+abstract class OtherExpenseAccount extends Control implements IControl
 {
     /**
      * @var int $id
@@ -141,7 +143,7 @@ abstract class OtherExpenseAccount implements IControl
     /**
      * Controls variable.
      *
-     * @param string $param - string variable which contains data
+     * @param string|int|DateTime $param - string variable which contains data
      * @return bool
      */
     public static function control($param)
@@ -161,10 +163,32 @@ abstract class OtherExpenseAccount implements IControl
 
         // File control
         if (!$verification) {
-            // Type mime verification.
+            // Type mime verification
             $verification = ($param === 'image/png' || $param === 'image/jpeg') ? true : false;
         }
 
         return $verification;
+    }
+
+    /**
+     *
+     *
+     * @param array $array
+     * @return int
+     */
+    public static function verification($array)
+    {
+        $error = 0;
+
+        foreach ($array as $item) {
+            $verification = OtherExpenseAccount::control($item);
+
+            if (!$verification) {
+                var_dump($item);
+                $error += 1;
+            }
+        }
+
+        return $error;
     }
 }

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ parent() }} - stock{% endblock %}
+
+
+
+{% block elements %}
+    <div class="mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{{ path('homepage') }}">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Stock</li>
+            </ol>
+        </nav>
+    </div>
+    <div class="mt-4">
+        <div class="text-center text-capitalize">
+            <h3>This feature is not implemented currently.</h3>
+        </div>
+    </div>
+{% endblock %}

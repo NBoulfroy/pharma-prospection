@@ -2,7 +2,7 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class Parameter implements IControl
+abstract class Parameter
 {
     /** @var int $id */
     protected $id;
@@ -59,24 +59,5 @@ abstract class Parameter implements IControl
     public function setValue($value)
     {
         $this->value = $value;
-    }
-
-    /**
-     * Controls variable.
-     *
-     * @param string $param - power cost
-     * @param null|string $case -
-     * @return bool
-     */
-    public static function control($param, $case = null)
-    {
-        switch ($case) {
-            case 'designation':
-                break;
-            case 'value':
-                break;
-        }
-
-        return false;
     }
 }

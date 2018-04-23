@@ -2,7 +2,7 @@
 
 namespace ProspectorBundle\Model;
 
-abstract class Car implements IControl
+abstract class Car
 {
     /** @var int $id */
     protected $id;
@@ -59,17 +59,5 @@ abstract class Car implements IControl
     public function setPower($power)
     {
         $this->power = $power;
-    }
-
-    /**
-     * Controls number plate.
-     *
-     * @param string $param - Number plate
-     * @param null|string $case - Country abbreviation
-     * @return bool
-     */
-    public static function control($param)
-    {
-        return false;
     }
 }

@@ -7,8 +7,16 @@ interface IControl
     /**
      * Controls the variable content by pattern.
      *
-     * @param string|int $param
+     * @param int|string|float $param
      * @return boolean
      */
-    public static function control($param);
+    static function control($param);
+
+    /**
+     * Controls the variable content by pattern.
+     *
+     * @param array $array
+     * @return int
+     */
+    public static function verification($array);
 }
