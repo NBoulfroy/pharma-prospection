@@ -76,14 +76,11 @@
                         </table>
                     </div>
                     <p>Total amount: {{ expenseAccount.0.totalAmount }}</p>
-                    <div style="page-break-before: always;">
-                        <h3 class="text-center">Voucher copies</h3>
-                        {% for otherExpenseAccount in otherExpensesAccount %}
-                            <br />
-                            <h3 class="text-center">{{ otherExpenseAccount.designation }}, {{ otherExpenseAccount.date|date('Y-m-d') }}</h3>
-                            <img src="upload/otherExpenseAccount/{{ otherExpenseAccount.file }}" />
-                        {% endfor %}
-                    </div>
+                    {% for otherExpenseAccount in otherExpensesAccount %}
+						<div style="page-break-before: always;"></div>
+						<h3 class="text-center">{{ otherExpenseAccount.designation }}, {{ otherExpenseAccount.date|date('Y-m-d') }}</h3>
+                        <img src="upload/otherExpenseAccount/{{ otherExpenseAccount.file }}" />
+					{% endfor %}
                 {% endif %}
             </div>
         </div>

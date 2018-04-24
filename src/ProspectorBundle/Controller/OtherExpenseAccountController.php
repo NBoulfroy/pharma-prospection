@@ -195,12 +195,28 @@ class OtherExpenseAccountController extends Controller
             return $this->redirectToRoute('fos_user_security_login');
         }
 
+        // Takes the date from system.
+        $today = new DateTime();
+
         $doctrine = $this->getDoctrine();
 
+        // Gets ExpenseAccount from database.
         $expenseAccount = $doctrine->getRepository(ExpenseAccount::class)->findBy(array(
             'id' => $expenseAccountId,
             'person' => $this->getUser()
         ));
+
+        // Sets new date
+        $end = new DateTime($expenseAccount[0]->getDate()->format('Y-m-d'));
+        $end->add(new DateInterval('P1M'));
+
+        if (!ExpenseAccount::controlDate($end, $expenseAccount[0]->getDate(), $today->format('Y-m-d'))) {
+            $this->get('session')->getFlashBag()->set('error_delay', 'You can\'t submit this expense account because the authorized time is exceeded.');
+
+            return $this->redirectToRoute('prospector_expense_account_detail', array(
+                'id' => $expenseAccountId
+            ));
+        }
 
         if (empty($expenseAccount) || is_null($expenseAccount)) {
             $this->get('session')->getFlashBag()->set('error', 'You don\'t have the permission to manipulate this expense account.');
