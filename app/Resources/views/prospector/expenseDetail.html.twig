@@ -13,7 +13,6 @@
 {% endblock %}
 
 {% block elements %}
-    {# TODO : UPDATE THIS PART IF I HAVE A BETTER SOLUTION #}
     {%  set totalNights = expenseAccount.0.night * nightPrice %}
     {% set totalMiddayMeals = expenseAccount.0.middayMeal * middayMealPrice %}
     {% set totalMileages = expenseAccount.0.mileage * mileagePrice %}
@@ -61,10 +60,15 @@
                                 <span class="font-weight-bold">Warning:</span> you don't have the permission to manipulate this expense account.
                             </div>
                         {% endfor %}
-                    {% elseif app.session.flashBag.get('success') %}
+                    {% elseif app.session.flashBag.get('success_delete') %}
                         <div class="alert alert-dismissible alert-success text-center">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                             <span class="font-weight-bold">Success:</span> other expense account removed with success.
+                        </div>
+                    {% elseif app.session.flashBag.get('success_submit') %}
+                        <div class="alert alert-dismissible alert-success text-center">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <span class="font-weight-bold">Success:</span> other expense account submitted with success.
                         </div>
                     {% else %}
                     {% endif %}
@@ -166,7 +170,7 @@
     <div class="mt-4">
         <div class="row">
             <div class="col-3">
-                <div class="form-group">
+                <div class="form-group data">
                     {#<label for="totalAmount">Total amount:</label>#}
                     <input class="form-control" id="totalAmount" disabled="disabled"
                            value="{{ expenseAccount.0.totalAmount }}" />
@@ -254,7 +258,7 @@
                 ['add', 'close', 'cross'],
                 '{{ path('prospector_expense_account_detail', { id: id }) }}',
                 'data',
-                'tableDelete',
+                'tableDeleteUpdate',
                 '/otherExpenseAccount-delete'
             );
         };

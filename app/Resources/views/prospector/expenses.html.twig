@@ -62,7 +62,7 @@
                     </td>
                     <td >
                         <a href="{{ path('prospector_expense_account_detail', { id: expenseAccount.id }) }}" class="btn btn-primary">Details</a>
-                        <a href="/expense/account-print/" class="btn btn-primary">Print</a>
+                        <a href="{{ path('prospector_expense_account_printer', { id: expenseAccount.id }) }}" class="btn btn-primary">Print</a>
                     </td>
                 </tr>
             {% endfor %}

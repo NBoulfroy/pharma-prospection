@@ -172,7 +172,7 @@ Ajax.prototype._displayTable = function(dataClass, response, max) {
         tr.appendChild(element);
     }
 
-    dataClass.appendChild(tr);
+    dataClass[0].appendChild(tr);
 };
 
 /**
@@ -205,7 +205,7 @@ Ajax.prototype._displayTableDetail = function(dataClass, response, max, href) {
         tr.appendChild(element);
     }
 
-    dataClass.appendChild(tr);
+    dataClass[0].appendChild(tr);
 };
 
 /**
@@ -242,7 +242,7 @@ Ajax.prototype._displayTableDetailPrint = function(dataClass, response, max, hre
         tr.appendChild(element);
     }
 
-    dataClass.appendChild(tr);
+    dataClass[0].appendChild(tr);
 };
 
 /**
@@ -288,7 +288,56 @@ Ajax.prototype._displayTableDelete = function(dataClass, response, max, href) {
         tr.appendChild(element);
     }
 
-    dataClass.appendChild(tr);
+    dataClass[0].appendChild(tr);
+};
+
+/**
+ * Constructs a table with a delete button and update data from input.
+ *
+ * @param {ActiveX.IXMLDOMElement} dataClass - where the new data must be added
+ * @param {JSON} response - data from AJAX request
+ * @param {int} max - maximum of elements in json
+ * @param {string} href - for href <a></a> HTML element
+ * @private
+ */
+Ajax.prototype._displayTableDeleteUpdate = function(dataClass, response, max, href) {
+    let tr = document.createElement('tr');
+
+    for (let i = 0; i < max - 1; i++) {
+        let element = document.createElement('td');
+
+        if (i < (max - 3)) {
+            if (i < (max - 3) && /^\/[a-zA-Z0-9]{1,}\/[a-zA-Z0-9]{1,}\/[a-zA-Z0-9]{1,}\.(jpg|jpeg|png)$/g.test(response.data[i])) {
+                let link = document.createElement('a');
+                link.setAttribute('href', response.data[i]);
+                link.setAttribute('target', '_blank');
+                link.innerHTML = 'voucher';
+                element.appendChild(link);
+            } else {
+                element.innerHTML = response.data[i];
+            }
+        } else {
+            let link = document.createElement('a');
+            let url = href + '/' + response.data[i];
+
+            // Forces incrementation of variable i to obtain the last attribute necessary for the route.
+            i++;
+            // Appends in url variable the next information (id)
+            url += '/' + response.data[i];
+
+            link.setAttribute('href', url);
+            link.setAttribute('class', 'btn btn-primary');
+            link.innerHTML = 'Delete';
+            element.appendChild(link);
+        }
+
+        tr.appendChild(element);
+    }
+
+    dataClass[0].appendChild(tr);
+
+    let value = parseFloat(dataClass[1].getElementsByTagName('input')[0].value);
+    dataClass[1].getElementsByTagName('input')[0].value = parseFloat(value) + parseFloat(response.data[max - 1]);
 };
 
 /**
@@ -315,6 +364,9 @@ Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
             break;
         case 'tableDelete':
             Ajax.prototype._displayTableDelete(dataClass, response, max, link);
+            break;
+        case 'tableDeleteUpdate':
+            Ajax.prototype._displayTableDeleteUpdate(dataClass, response, max, link);
             break;
     }
 };

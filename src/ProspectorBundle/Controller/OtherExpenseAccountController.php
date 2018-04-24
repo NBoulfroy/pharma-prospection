@@ -120,7 +120,8 @@ class OtherExpenseAccountController extends Controller
                 floatval($otherExpenseAccount->getAmount()),
                 '/upload/otherExpenseAccount/' . $otherExpenseAccount->getFile(),
                 $expenseAccount->getId(),
-                $otherExpenseAccount->getId()
+                $otherExpenseAccount->getId(),
+                floatval($otherExpenseAccount->getAmount())
             ));
         } catch (ORMException $e) {
             return Ajax::JSONResponse('error', 'An error is occurred, please contact support if this happens again.');
@@ -172,7 +173,7 @@ class OtherExpenseAccountController extends Controller
                 'id' => $expenseAccountId
             ));
         } finally {
-            $this->get('session')->getFlashBag()->set('success', 'Other expense account removed with success.');
+            $this->get('session')->getFlashBag()->set('success_delete', 'Other expense account removed with success.');
 
             return $this->redirectToRoute('prospector_expense_account_detail', array(
                 'id' => $expenseAccountId
@@ -219,7 +220,7 @@ class OtherExpenseAccountController extends Controller
                 'id' => $expenseAccountId
             ));
         } finally {
-            $this->get('session')->getFlashBag()->set('success', 'Other expense account submitted with success.');
+            $this->get('session')->getFlashBag()->set('success_submit', 'Other expense account submitted with success.');
 
             return $this->redirectToRoute('prospector_expense_account_detail', array(
                 'id' => $expenseAccountId
