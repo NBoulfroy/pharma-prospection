@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <link rel="stylesheet" href="assets/css/styles.css" />
+        <link rel="stylesheet" href="assets/bootstrap/css/cosmos.bootstrap.min.css" />
+        <link rel="stylesheet" href="assets/bootstrap/css/bootstrap-grid.min.css" />
+        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.min.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="">
+                <p><span style="text-decoration: underline;">ID number:</span> {{ person.username }}</p>
+                <p><span style="text-decoration: underline;">Last name:</span> {{ profile.0.lastName }}</p>
+                <p><span style="text-decoration: underline;">First name:</span> {{ profile.0.firstName }}</p>
+                <p><span style="text-decoration: underline;">Date:</span> {{ expenseAccount.0.date|date('m-Y') }}</p>
+            </div>
+            {%  set totalNights = expenseAccount.0.night * nightPrice %}
+            {% set totalMiddayMeals = expenseAccount.0.middayMeal * middayMealPrice %}
+            {% set totalMileages = expenseAccount.0.mileage * mileagePrice %}
+            <div class="mt-4">
+                <h3 class="text-center">Expense account</h3>
+                <table class="table table-hover text-center">
+                    <thead>
+                    <tr>
+                        <th scope="col">Flat fee</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit amount</th>
+                        <th scope="col">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>Night(s)</td>
+                        <td>{{ expenseAccount.0.night }}</td>
+                        <td>{{ nightPrice }}</td>
+                        <td>{{ totalNights }}</td>
+                    </tr>
+                    <tr>
+                        <td>Midday meal(s)</td>
+                        <td>{{ expenseAccount.0.middayMeal }}</td>
+                        <td>{{ middayMealPrice }}</td>
+                        <td>{{ totalMiddayMeals }}</td>
+                    </tr>
+                    <tr>
+                        <td>Kilometers</td>
+                        <td>{{ expenseAccount.0.mileage }}</td>
+                        <td>{{ mileagePrice }}</td>
+                        <td>{{ totalMileages }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                {% if otherExpensesAccount is null or otherExpensesAccount is empty %}
+                   <p>Total amount: {{ expenseAccount.0.totalAmount }}</p>
+                {% else %}
+                    <div class="mt-4">
+                        <h3 class="text-center">Other expenses account</h3>
+                        <table class="table table-hover text-center">
+                            <thead>
+                            <tr>
+                                <th scope="col">Date</th>
+                                <th scope="col">Designation</th>
+                                <th scope="col">Amount</th>
+                            </tr>
+                            </thead>
+                            <tbody class="data">
+                            {% for otherExpenseAccount in otherExpensesAccount %}
+                                <tr>
+                                    <td>{{ otherExpenseAccount.date|date('Y-m-d') }}</td>
+                                    <td>{{ otherExpenseAccount.designation }}</td>
+                                    <td>{{ otherExpenseAccount.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p>Total amount: {{ expenseAccount.0.totalAmount }}</p>
+                    <div style="page-break-before: always;">
+                        <h3 class="text-center">Voucher copies</h3>
+                        {% for otherExpenseAccount in otherExpensesAccount %}
+                            <br />
+                            <h3 class="text-center">{{ otherExpenseAccount.designation }}, {{ otherExpenseAccount.date|date('Y-m-d') }}</h3>
+                            <img src="upload/otherExpenseAccount/{{ otherExpenseAccount.file }}" />
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <script type="text/javascript" src="assets/jquery/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
