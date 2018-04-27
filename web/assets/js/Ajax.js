@@ -6,7 +6,7 @@
  * @Version : 1.3
  * @Author  : BOULFROY Nicolas
  * @Create  : 2018/03/15
- * @Update  : 2018/04/21
+ * @Update  : 2018/04/27
  */
 
 /**
@@ -52,6 +52,11 @@ Ajax.prototype._createRequest = function() {
     }
 };
 
+/**
+ *
+ * @param {HTMLDivElement} div
+ * @private
+ */
 Ajax.prototype._displayMessageOnProgress = function(div) {
     div.setAttribute('class', 'alert alert-dismissible alert-warning text-center');
 
@@ -371,6 +376,12 @@ Ajax.prototype._displayResponse = function(dataClass, response, type, link) {
     }
 };
 
+/**
+ * Displays default color for all inputs in the form passed in parameter.
+ *
+ * @param {ActiveX.IXMLDOMElement} form
+ * @private
+ */
 Ajax.prototype._displayGoodData = function(form) {
     for (let i = 0; i < form.getElementsByTagName('input').length - 1; i++) {
         form.getElementsByTagName('input')[i].style.borderColor = '#d3d3d3';
