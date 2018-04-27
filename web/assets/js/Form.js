@@ -36,7 +36,7 @@ function Form(modal = null, formClass, submitButton, buttons, url, dataClass, ty
 }
 
 /**
- *
+ * DateTime controls.
  *
  * @param {string} value
  * @private
@@ -87,7 +87,7 @@ Form.prototype._controlValue = function(type, value) {
 };
 
 /**
- *
+ * Resets color to all inputs in form passed in parameter.
  *
  * @param form
  * @private
@@ -201,13 +201,11 @@ Form.prototype._events = function() {
     }
 
     // Sets for buttons an event passed in parameter in constructor (array)
-    if (buttons > 0) {
-        for (let k = 0; k < buttons.length; k++) {
-            document.getElementById(buttons[k]).addEventListener('click', function() {
-                document.getElementsByClassName(formClass)[0].reset();
-                Form.prototype._resetColorInput(form);
-            });
-        }
+    for (let k = 0; k < buttons.length; k++) {
+        document.getElementById(buttons[k]).addEventListener('click', function() {
+            document.getElementsByClassName(formClass)[0].reset();
+            Form.prototype._resetColorInput(form);
+        });
     }
 
     // Creates an event to manage AJAX request.
